@@ -1,0 +1,417 @@
+{% extends "base.html" %}
+
+{% block title %}Baby Essentials - Baby Tracker{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-5 mb-4">
+                <i class="bi bi-list-check text-primary"></i> Baby Essentials
+            </h1>
+            <p class="lead text-muted mb-5">Everything you need to prepare for your newborn's arrival</p>
+        </div>
+    </div>
+    
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4" id="essentialsTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="immediate-tab" data-bs-toggle="tab" data-bs-target="#immediate" type="button" role="tab">
+                <i class="bi bi-exclamation-circle"></i> Immediate Needs
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="registry-tab" data-bs-toggle="tab" data-bs-target="#registry" type="button" role="tab">
+                <i class="bi bi-gift"></i> Baby Registry
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="first-days-tab" data-bs-toggle="tab" data-bs-target="#first-days" type="button" role="tab">
+                <i class="bi bi-calendar-heart"></i> First Days
+            </button>
+        </li>
+    </ul>
+    
+    <div class="tab-content" id="essentialsTabContent">
+        <!-- Immediate Needs Tab -->
+        <div class="tab-pane fade show active" id="immediate" role="tabpanel">
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-cup-straw"></i> Feeding Essentials
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="checklist">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="bottles">
+                                    <label class="form-check-label" for="bottles">
+                                        <strong>Bottles (4-6)</strong> - Glass or BPA-free plastic
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="nipples">
+                                    <label class="form-check-label" for="nipples">
+                                        <strong>Nipples</strong> - Slow-flow for newborns
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="formula">
+                                    <label class="form-check-label" for="formula">
+                                        <strong>Formula</strong> - If not exclusively breastfeeding
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="breast-pump">
+                                    <label class="form-check-label" for="breast-pump">
+                                        <strong>Breast pump</strong> - Electric or manual
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="nursing-pads">
+                                    <label class="form-check-label" for="nursing-pads">
+                                        <strong>Nursing pads</strong> - Disposable or reusable
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="burp-cloths">
+                                    <label class="form-check-label" for="burp-cloths">
+                                        <strong>Burp cloths (6-8)</strong> - For feeding cleanup
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-moon-stars"></i> Sleep & Comfort
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="checklist">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="crib">
+                                    <label class="form-check-label" for="crib">
+                                        <strong>Crib or bassinet</strong> - Safe sleep space
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="mattress">
+                                    <label class="form-check-label" for="mattress">
+                                        <strong>Firm mattress</strong> - Fits snugly in crib
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="fitted-sheets">
+                                    <label class="form-check-label" for="fitted-sheets">
+                                        <strong>Fitted sheets (3-4)</strong> - Crib-sized
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="swaddles">
+                                    <label class="form-check-label" for="swaddles">
+                                        <strong>Swaddle blankets (3-4)</strong> - For better sleep
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="sleep-sacks">
+                                    <label class="form-check-label" for="sleep-sacks">
+                                        <strong>Sleep sacks</strong> - Wearable blankets
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="white-noise">
+                                    <label class="form-check-label" for="white-noise">
+                                        <strong>White noise machine</strong> - For soothing
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-droplet"></i> Diaper & Hygiene
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="checklist">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="newborn-diapers">
+                                    <label class="form-check-label" for="newborn-diapers">
+                                        <strong>Newborn diapers</strong> - 2-3 packs to start
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="size1-diapers">
+                                    <label class="form-check-label" for="size1-diapers">
+                                        <strong>Size 1 diapers</strong> - For when they grow
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="baby-wipes">
+                                    <label class="form-check-label" for="baby-wipes">
+                                        <strong>Baby wipes</strong> - Fragrance-free sensitive
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="diaper-cream">
+                                    <label class="form-check-label" for="diaper-cream">
+                                        <strong>Diaper rash cream</strong> - Zinc oxide based
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="changing-pad">
+                                    <label class="form-check-label" for="changing-pad">
+                                        <strong>Changing pad</strong> - With safety straps
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="baby-wash">
+                                    <label class="form-check-label" for="baby-wash">
+                                        <strong>Baby wash & shampoo</strong> - Gentle formula
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-warning text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-person-fill"></i> Clothing Basics
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="checklist">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="onesies">
+                                    <label class="form-check-label" for="onesies">
+                                        <strong>Onesies (6-8)</strong> - Short and long sleeve
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="sleepers">
+                                    <label class="form-check-label" for="sleepers">
+                                        <strong>Sleepers/footies (4-6)</strong> - Easy diaper access
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="pants">
+                                    <label class="form-check-label" for="pants">
+                                        <strong>Pants (4-6 pairs)</strong> - Elastic waist
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="socks">
+                                    <label class="form-check-label" for="socks">
+                                        <strong>Socks/booties (6-8)</strong> - Stay-on style
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="hats">
+                                    <label class="form-check-label" for="hats">
+                                        <strong>Hats (2-3)</strong> - For temperature regulation
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="mittens">
+                                    <label class="form-check-label" for="mittens">
+                                        <strong>Mittens</strong> - To prevent scratching
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Baby Registry Tab -->
+        <div class="tab-pane fade" id="registry" role="tabpanel">
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> 
+                        <strong>Tip:</strong> Create your registry 2-3 months before your due date. Include items in various price ranges for different budgets.
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-currency-dollar"></i> Budget-Friendly ($0-$50)
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Baby bottles</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Pacifiers</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Bibs</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Washcloths</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Baby socks</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Burp cloths</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Receiving blankets</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Baby wipes</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Diaper cream</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Baby nail clippers</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-warning text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-currency-dollar"></i> Mid-Range ($50-$200)
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Baby monitor</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Bouncer/swing</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> High chair</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Baby bathtub</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Diaper bag</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Baby carrier/wrap</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Play mat</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Night light</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Breast pump</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Baby humidifier</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-currency-dollar"></i> Investment Items ($200+)
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Car seat (infant)</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Stroller</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Crib</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Crib mattress</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Changing table/dresser</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Glider/nursing chair</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Baby gate</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Video monitor</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Convertible car seat</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Travel system</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- First Days Tab -->
+        <div class="tab-pane fade" id="first-days" role="tabpanel">
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> 
+                        <strong>Hospital Bag Ready?</strong> Pack these essentials 2-3 weeks before your due date.
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-hospital"></i> For Hospital/Birth Center
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="text-muted">For Baby:</h6>
+                            <ul class="list-unstyled mb-3">
+                                <li class="mb-1"><i class="bi bi-dot"></i> Going-home outfit (newborn & 0-3 months)</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Car seat (required to leave hospital)</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Blankets for warmth</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Hat and mittens</li>
+                            </ul>
+                            
+                            <h6 class="text-muted">For You:</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-1"><i class="bi bi-dot"></i> Comfortable going-home clothes</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Nursing bras and pads</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Personal care items</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Phone charger</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Camera for first photos</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-house"></i> First Week at Home
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="text-muted">Must-Haves Ready:</h6>
+                            <ul class="list-unstyled mb-3">
+                                <li class="mb-1"><i class="bi bi-dot"></i> Safe sleep space set up</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Feeding supplies ready</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Diaper changing station</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Pediatrician contact info</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Emergency numbers list</li>
+                            </ul>
+                            
+                            <h6 class="text-muted">Helpful to Have:</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-1"><i class="bi bi-dot"></i> Meal prep or food delivery</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Help from family/friends</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Comfortable nursing/feeding area</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Baby tracking app or journal</li>
+                                <li class="mb-1"><i class="bi bi-dot"></i> Postpartum support resources</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Save checklist state to localStorage
+    $('.form-check-input').on('change', function() {
+        const checkboxId = $(this).attr('id');
+        const isChecked = $(this).is(':checked');
+        localStorage.setItem(`checkbox_${checkboxId}`, isChecked);
+    });
+    
+    // Load checklist state from localStorage
+    $('.form-check-input').each(function() {
+        const checkboxId = $(this).attr('id');
+        const savedState = localStorage.getItem(`checkbox_${checkboxId}`);
+        if (savedState === 'true') {
+            $(this).prop('checked', true);
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,521 @@
+{% extends "base.html" %}
+
+{% block title %}Newborn Care Guide - Baby Tracker{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-5 mb-4">
+                <i class="bi bi-heart-pulse text-success"></i> Newborn Care Guide
+            </h1>
+            <p class="lead text-muted mb-5">Complete guide to caring for your newborn baby</p>
+        </div>
+    </div>
+    
+    <!-- Care Topics Navigation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="list-group list-group-horizontal-md" id="care-topics">
+                <button class="list-group-item list-group-item-action active" data-topic="feeding">
+                    <i class="bi bi-cup-straw"></i> Feeding
+                </button>
+                <button class="list-group-item list-group-item-action" data-topic="sleeping">
+                    <i class="bi bi-moon-stars"></i> Sleeping
+                </button>
+                <button class="list-group-item list-group-item-action" data-topic="diapering">
+                    <i class="bi bi-droplet"></i> Diapering
+                </button>
+                <button class="list-group-item list-group-item-action" data-topic="bathing">
+                    <i class="bi bi-water"></i> Bathing
+                </button>
+                <button class="list-group-item list-group-item-action" data-topic="health">
+                    <i class="bi bi-thermometer"></i> Health
+                </button>
+                <button class="list-group-item list-group-item-action" data-topic="safety">
+                    <i class="bi bi-shield-check"></i> Safety
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Care Content -->
+    <div id="care-content">
+        <!-- Feeding Section -->
+        <div class="care-section" id="feeding-section">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Feeding Your Newborn</h3>
+                        </div>
+                        <div class="card-body">
+                            <h5>Breastfeeding Basics</h5>
+                            <ul class="mb-4">
+                                <li><strong>Frequency:</strong> Every 1.5-3 hours (8-12 times per day)</li>
+                                <li><strong>Duration:</strong> 15-45 minutes per session</li>
+                                <li><strong>Signs of hunger:</strong> Rooting, sucking motions, fussiness</li>
+                                <li><strong>Good latch:</strong> Baby's mouth covers most of areola</li>
+                            </ul>
+                            
+                            <h5>Formula Feeding</h5>
+                            <ul class="mb-4">
+                                <li><strong>Amount:</strong> 1-3 oz per feeding for newborns</li>
+                                <li><strong>Frequency:</strong> Every 2-4 hours</li>
+                                <li><strong>Temperature:</strong> Room temperature or slightly warm</li>
+                                <li><strong>Preparation:</strong> Follow formula instructions exactly</li>
+                            </ul>
+                            
+                            <h5>Signs Baby is Getting Enough</h5>
+                            <ul class="mb-3">
+                                <li>6+ wet diapers per day after day 5</li>
+                                <li>Regular bowel movements</li>
+                                <li>Weight gain after initial loss</li>
+                                <li>Alert periods between feeds</li>
+                                <li>Content after feeding</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">Quick Tips</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-circle"></i>
+                                <strong>When to Call Doctor:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>No wet diapers for 12+ hours</li>
+                                    <li>Signs of dehydration</li>
+                                    <li>Consistent refusal to feed</li>
+                                    <li>Excessive vomiting</li>
+                                </ul>
+                            </div>
+                            <h6>Helpful Resources:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-telephone"></i> Lactation consultant</li>
+                                <li><i class="bi bi-book"></i> Breastfeeding classes</li>
+                                <li><i class="bi bi-people"></i> New parent support groups</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sleeping Section -->
+        <div class="care-section d-none" id="sleeping-section">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h3 class="card-title mb-0">Safe Sleep Guidelines</h3>
+                        </div>
+                        <div class="card-body">
+                            <h5>Safe Sleep Basics</h5>
+                            <ul class="mb-4">
+                                <li><strong>Position:</strong> Always place baby on their back</li>
+                                <li><strong>Surface:</strong> Firm sleep surface with fitted sheet</li>
+                                <li><strong>Environment:</strong> No blankets, pillows, bumpers, or toys</li>
+                                <li><strong>Location:</strong> Baby sleeps in your room, not your bed</li>
+                            </ul>
+                            
+                            <h5>Typical Sleep Patterns</h5>
+                            <ul class="mb-4">
+                                <li><strong>Newborn (0-3 months):</strong> 14-17 hours per day</li>
+                                <li><strong>Sleep cycles:</strong> 2-4 hours at a time</li>
+                                <li><strong>Day/night confusion:</strong> Common first few weeks</li>
+                                <li><strong>Sleep regression:</strong> May occur around 4 months</li>
+                            </ul>
+                            
+                            <h5>Creating Good Sleep Habits</h5>
+                            <ul class="mb-3">
+                                <li>Consistent bedtime routine</li>
+                                <li>Swaddle for comfort and security</li>
+                                <li>White noise or soft music</li>
+                                <li>Room temperature 68-70°F</li>
+                                <li>Dim lights during night feedings</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-warning text-white">
+                            <h5 class="mb-0">Sleep Safety</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                <strong>SIDS Prevention:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Back sleeping only</li>
+                                    <li>Smoke-free environment</li>
+                                    <li>Breastfeed if possible</li>
+                                    <li>Regular prenatal care</li>
+                                    <li>Avoid overheating</li>
+                                </ul>
+                            </div>
+                            <h6>Sleep Aids:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check"></i> Swaddles</li>
+                                <li><i class="bi bi-check"></i> Sleep sacks</li>
+                                <li><i class="bi bi-check"></i> White noise machine</li>
+                                <li><i class="bi bi-check"></i> Blackout curtains</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Diapering Section -->
+        <div class="care-section d-none" id="diapering-section">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h3 class="card-title mb-0">Diaper Changing & Care</h3>
+                        </div>
+                        <div class="card-body">
+                            <h5>How Often to Change</h5>
+                            <ul class="mb-4">
+                                <li><strong>Newborns:</strong> 8-12 times per day</li>
+                                <li><strong>Wet diapers:</strong> Change every 2-3 hours</li>
+                                <li><strong>Soiled diapers:</strong> Change immediately</li>
+                                <li><strong>Night changes:</strong> Only if soiled or very wet</li>
+                            </ul>
+                            
+                            <h5>Step-by-Step Changing</h5>
+                            <ol class="mb-4">
+                                <li>Gather all supplies before starting</li>
+                                <li>Lay baby on changing pad safely</li>
+                                <li>Remove dirty diaper carefully</li>
+                                <li>Clean thoroughly with wipes or warm cloth</li>
+                                <li>Apply diaper cream if needed</li>
+                                <li>Put on fresh diaper (snug but not tight)</li>
+                                <li>Wash your hands thoroughly</li>
+                            </ol>
+                            
+                            <h5>Normal Bowel Movements</h5>
+                            <ul class="mb-3">
+                                <li><strong>First few days:</strong> Dark, tarry meconium</li>
+                                <li><strong>Breastfed:</strong> Yellow, seedy, loose</li>
+                                <li><strong>Formula-fed:</strong> Tan/yellow, firmer consistency</li>
+                                <li><strong>Frequency:</strong> Several times per day to once per week</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="mb-0">Diaper Rash</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6>Prevention:</h6>
+                            <ul class="mb-3">
+                                <li>Change diapers frequently</li>
+                                <li>Clean gently but thoroughly</li>
+                                <li>Let skin air dry when possible</li>
+                                <li>Use barrier cream</li>
+                            </ul>
+                            
+                            <h6>Treatment:</h6>
+                            <ul class="mb-3">
+                                <li>Keep area clean and dry</li>
+                                <li>Use zinc oxide cream</li>
+                                <li>Avoid scented products</li>
+                                <li>Call doctor if severe or persistent</li>
+                            </ul>
+                            
+                            <div class="alert alert-warning">
+                                <small><strong>When to worry:</strong> Fever, blisters, or rash spreading beyond diaper area</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bathing Section -->
+        <div class="care-section d-none" id="bathing-section">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Bathing Your Newborn</h3>
+                        </div>
+                        <div class="card-body">
+                            <h5>Before Umbilical Cord Falls Off</h5>
+                            <ul class="mb-4">
+                                <li><strong>Sponge baths only</strong> until cord heals</li>
+                                <li>Use warm washcloths and mild soap</li>
+                                <li>Keep cord area clean and dry</li>
+                                <li>Pat dry gently, don't rub</li>
+                            </ul>
+                            
+                            <h5>First Tub Baths</h5>
+                            <ul class="mb-4">
+                                <li><strong>Water temperature:</strong> 98-100°F (37-38°C)</li>
+                                <li><strong>Water depth:</strong> 2-3 inches maximum</li>
+                                <li><strong>Frequency:</strong> 2-3 times per week</li>
+                                <li><strong>Duration:</strong> 5-10 minutes</li>
+                            </ul>
+                            
+                            <h5>Bath Safety Steps</h5>
+                            <ol class="mb-3">
+                                <li>Fill tub with warm (not hot) water</li>
+                                <li>Test temperature with elbow or thermometer</li>
+                                <li>Support baby's head and neck always</li>
+                                <li>Lower baby feet-first into water</li>
+                                <li>Keep one hand supporting at all times</li>
+                                <li>Wash face first, diaper area last</li>
+                                <li>Lift out carefully and wrap immediately</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0">Bath Safety</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                <strong>Never leave baby alone</strong> in or near water, even for a second!
+                            </div>
+                            
+                            <h6>Essential Supplies:</h6>
+                            <ul class="list-unstyled mb-3">
+                                <li><i class="bi bi-check"></i> Baby bathtub or clean sink</li>
+                                <li><i class="bi bi-check"></i> Soft washcloths</li>
+                                <li><i class="bi bi-check"></i> Mild baby soap/shampoo</li>
+                                <li><i class="bi bi-check"></i> Hooded towels</li>
+                                <li><i class="bi bi-check"></i> Non-slip mat</li>
+                            </ul>
+                            
+                            <h6>Signs of Trouble:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-thermometer"></i> Shivering or blue lips</li>
+                                <li><i class="bi bi-exclamation-circle"></i> Excessive crying</li>
+                                <li><i class="bi bi-water"></i> Skin irritation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Health Section -->
+        <div class="care-section d-none" id="health-section">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h3 class="card-title mb-0">Health & Development</h3>
+                        </div>
+                        <div class="card-body">
+                            <h5>Normal Newborn Characteristics</h5>
+                            <ul class="mb-4">
+                                <li>Birth weight: 5.5-10 lbs (may lose 7-10% first week)</li>
+                                <li>Soft spots (fontanelles) on head</li>
+                                <li>Blotchy skin, possible birthmarks</li>
+                                <li>Irregular breathing patterns</li>
+                                <li>Startle reflexes and jerky movements</li>
+                            </ul>
+                            
+                            <h5>When to Call Your Pediatrician</h5>
+                            <ul class="mb-4">
+                                <li><strong>Feeding issues:</strong> Won't eat, vomits everything</li>
+                                <li><strong>Fever:</strong> Temperature over 100.4°F (38°C)</li>
+                                <li><strong>Breathing:</strong> Fast, labored, or blue lips</li>
+                                <li><strong>Behavior:</strong> Unusually fussy or lethargic</li>
+                                <li><strong>Elimination:</strong> No wet diapers for 12+ hours</li>
+                            </ul>
+                            
+                            <h5>Developmental Milestones (0-2 months)</h5>
+                            <ul class="mb-3">
+                                <li>Focuses on faces 8-12 inches away</li>
+                                <li>Responds to loud sounds</li>
+                                <li>Begins to lift head during tummy time</li>
+                                <li>Makes eye contact</li>
+                                <li>Begins to smile socially (6-8 weeks)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-warning text-white">
+                            <h5 class="mb-0">Emergency Signs</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-danger">
+                                <i class="bi bi-telephone-fill"></i>
+                                <strong>Call 911 if:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Difficulty breathing</li>
+                                    <li>Blue lips or face</li>
+                                    <li>Unresponsive</li>
+                                    <li>Seizure-like movements</li>
+                                    <li>High fever in newborn</li>
+                                </ul>
+                            </div>
+                            
+                            <h6>Important Numbers:</h6>
+                            <div class="border p-2 mb-3">
+                                <small class="text-muted">Pediatrician:</small><br>
+                                <input type="text" class="form-control form-control-sm" placeholder="Enter number" id="pediatrician-number">
+                            </div>
+                            
+                            <div class="border p-2">
+                                <small class="text-muted">Emergency Contact:</small><br>
+                                <input type="text" class="form-control form-control-sm" placeholder="Enter number" id="emergency-number">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Safety Section -->
+        <div class="care-section d-none" id="safety-section">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-danger text-white">
+                            <h3 class="card-title mb-0">Newborn Safety</h3>
+                        </div>
+                        <div class="card-body">
+                            <h5>Car Safety</h5>
+                            <ul class="mb-4">
+                                <li><strong>Car seat required</strong> from first ride home</li>
+                                <li>Rear-facing until at least 2 years old</li>
+                                <li>Never place car seat in front of active airbag</li>
+                                <li>Harness straps at or below shoulder level</li>
+                                <li>Professional installation check recommended</li>
+                            </ul>
+                            
+                            <h5>Home Safety</h5>
+                            <ul class="mb-4">
+                                <li><strong>Never leave baby unattended</strong> on changing tables, beds</li>
+                                <li>Install smoke and carbon monoxide detectors</li>
+                                <li>Keep small objects away from baby</li>
+                                <li>Secure furniture to walls</li>
+                                <li>Use safety gates at top and bottom of stairs</li>
+                            </ul>
+                            
+                            <h5>Handling Safety</h5>
+                            <ul class="mb-3">
+                                <li>Always support head and neck</li>
+                                <li>Never shake a baby</li>
+                                <li>Wash hands before handling</li>
+                                <li>Keep fingernails short</li>
+                                <li>Avoid strong perfumes or chemicals</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">Baby-Proofing Checklist</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6>Immediate Needs:</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="smoke-detectors">
+                                <label class="form-check-label" for="smoke-detectors">
+                                    Smoke detectors installed
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="car-seat-checked">
+                                <label class="form-check-label" for="car-seat-checked">
+                                    Car seat professionally checked
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="crib-safe">
+                                <label class="form-check-label" for="crib-safe">
+                                    Crib meets current safety standards
+                                </label>
+                            </div>
+                            
+                            <h6 class="mt-3">As Baby Grows:</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="outlet-covers">
+                                <label class="form-check-label" for="outlet-covers">
+                                    Electrical outlet covers
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="cabinet-locks">
+                                <label class="form-check-label" for="cabinet-locks">
+                                    Cabinet and drawer locks
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="furniture-secured">
+                                <label class="form-check-label" for="furniture-secured">
+                                    Heavy furniture secured to walls
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Topic navigation
+    $('#care-topics button').click(function() {
+        const topic = $(this).data('topic');
+        
+        // Update active button
+        $('#care-topics button').removeClass('active');
+        $(this).addClass('active');
+        
+        // Show corresponding section
+        $('.care-section').addClass('d-none');
+        $(`#${topic}-section`).removeClass('d-none');
+    });
+    
+    // Save important numbers
+    $('#pediatrician-number, #emergency-number').on('change', function() {
+        const id = $(this).attr('id');
+        const value = $(this).val();
+        localStorage.setItem(id, value);
+    });
+    
+    // Load saved numbers
+    $('#pediatrician-number').val(localStorage.getItem('pediatrician-number') || '');
+    $('#emergency-number').val(localStorage.getItem('emergency-number') || '');
+    
+    // Save safety checklist
+    $('.form-check-input').on('change', function() {
+        const checkboxId = $(this).attr('id');
+        const isChecked = $(this).is(':checked');
+        localStorage.setItem(`safety_${checkboxId}`, isChecked);
+    });
+    
+    // Load safety checklist
+    $('.form-check-input').each(function() {
+        const checkboxId = $(this).attr('id');
+        const savedState = localStorage.getItem(`safety_${checkboxId}`);
+        if (savedState === 'true') {
+            $(this).prop('checked', true);
+        }
+    });
+});
+</script>
+{% endblock %}

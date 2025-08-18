@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+
+{% block title %}Baby Tracking - Baby Tracker{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="display-6">
+                    <i class="bi bi-graph-up text-info"></i> Baby Tracking
+                </h1>
+                <div class="btn-group">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFeedingModal">
+                        <i class="bi bi-plus"></i> Add Feeding
+                    </button>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSleepModal">
+                        <i class="bi bi-plus"></i> Add Sleep
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-subtitle text-muted">Today's Feedings</h6>
+                            <h3 class="card-title mb-0" id="today-feedings">0</h3>
+                        </div>
+                        <div class="text-primary">
+                            <i class="bi bi-cup-straw" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-subtitle text-muted">Sleep Duration</h6>
+                            <h3 class="card-title mb-0" id="today-sleep">0h 0m</h3>
+                        </div>
+                        <div class="text-success">
+                            <i class="bi bi-moon-stars" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-subtitle text-muted">Last Feeding</h6>
+                            <h3 class="card-title mb-0" id="last-feeding">--:--</h3>
+                        </div>
+                        <div class="text-warning">
+                            <i class="bi bi-clock" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-subtitle text-muted">Sleep Status</h6>
+                            <h3 class="card-title mb-0" id="sleep-status">Awake</h3>
+                        </div>
+                        <div class="text-info">
+                            <i class="bi bi-activity" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts and Tables -->
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="feeding-chart-tab" data-bs-toggle="tab" data-bs-target="#feeding-chart" type="button">
+                                <i class="bi bi-bar-chart"></i> Feeding Chart
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="sleep-chart-tab" data-bs-toggle="tab" data-bs-target="#sleep-chart" type="button">
+                                <i class="bi bi-graph-up"></i> Sleep Chart
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="feeding-chart">
+                            <canvas id="feedingChartCanvas" width="400" height="200"></canvas>
+                        </div>
+                        <div class="tab-pane fade" id="sleep-chart">
+                            <canvas id="sleepChartCanvas" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recent Activity</h5>
+                </div>
+                <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+                    <div id="recent-activity">
+                        <div class="text-center p-4 text-muted">
+                            <i class="bi bi-clock-history" style="font-size: 2rem;"></i>
+                            <p>No recent activity</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Detailed Records -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-cup-straw text-primary"></i> Feeding Records
+                    </h5>
+                    <button class="btn btn-sm btn-outline-primary" id="export-feeding">
+                        <i class="bi bi-download"></i> Export
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 400px;">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Duration</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feeding-table-body">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted p-4">
+                                        No feeding records yet
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-moon-stars text-success"></i> Sleep Records
+                    </h5>
+                    <button class="btn btn-sm btn-outline-success" id="export-sleep">
+                        <i class="bi bi-download"></i> Export
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 400px;">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Duration</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sleep-table-body">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted p-4">
+                                        No sleep records yet
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Feeding Modal -->
+<div class="modal fade" id="addFeedingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-cup-straw"></i> Add Feeding Record
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addFeedingForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Feeding Type *</label>
+                            <select class="form-select" name="type" required>
+                                <option value="">Select type</option>
+                                <option value="breast">Breastfeeding</option>
+                                <option value="bottle">Bottle (Breast Milk)</option>
+                                <option value="formula">Formula</option>
+                                <option value="solid">Solid Food</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Amount</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="amount" step="0.1" min="0">
+                                <select class="form-select" name="amount_unit" style="max-width: 80px;">
+                                    <option value="ml">ml</option>
+                                    <option value="oz">oz</option>
+                                </select>
+                            </div>
+                            <small class="text-muted">Leave blank for breastfeeding</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Duration (minutes)</label>
+                            <input type="number" class="form-control" name="duration" min="1" max="120">
+                            <small class="text-muted">For breastfeeding or bottle time</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Time *</label>
+                            <input type="datetime-local" class="form-control" name="timestamp" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" name="notes" rows="2" placeholder="Any observations or notes..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveFeedingRecord">
+                    <i class="bi bi-check"></i> Save Feeding
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Sleep Modal -->
+<div class="modal fade" id="addSleepModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-moon-stars"></i> Add Sleep Record
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addSleepForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Start Time *</label>
+                            <input type="datetime-local" class="form-control" name="start_time" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">End Time</label>
+                            <input type="datetime-local" class="form-control" name="end_time">
+                            <small class="text-muted">Leave blank if still sleeping</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Sleep Type</label>
+                        <select class="form-select" name="sleep_type">
+                            <option value="">Select type</option>
+                            <option value="nap">Nap</option>
+                            <option value="night">Night Sleep</option>
+                            <option value="bedtime">Bedtime</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Sleep Quality</label>
+                        <select class="form-select" name="quality">
+                            <option value="">Not specified</option>
+                            <option value="excellent">Excellent</option>
+                            <option value="good">Good</option>
+                            <option value="fair">Fair</option>
+                            <option value="poor">Poor</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" name="notes" rows="2" placeholder="Sleep environment, disturbances, etc..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="saveSleepRecord">
+                    <i class="bi bi-check"></i> Save Sleep
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions Floating Button -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1000;">
+    <div class="btn-group-vertical">
+        <button class="btn btn-primary rounded-pill mb-2 shadow" data-bs-toggle="modal" data-bs-target="#addFeedingModal" title="Quick Feeding">
+            <i class="bi bi-cup-straw"></i>
+        </button>
+        <button class="btn btn-success rounded-pill shadow" data-bs-toggle="modal" data-bs-target="#addSleepModal" title="Quick Sleep">
+            <i class="bi bi-moon-stars"></i>
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/tracking.js') }}"></script>
+{% endblock %}

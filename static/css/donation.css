@@ -1,0 +1,26 @@
+
+    footer {
+        padding: 20px;
+        text-align: center;
+        background-color: #f4f4f4;
+    }
+
+    .donation p {
+        font-size: 16px;
+        color: #333;
+    }
+
+    .donation button {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .donation button:hover {
+        background-color: #218838;
+    }
+

@@ -1,0 +1,707 @@
+{% extends "base.html" %}
+
+{% block title %}Vaccine Schedule - Baby Tracker{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="display-6">
+                    <i class="bi bi-shield-plus text-warning"></i> Vaccine Schedule
+                </h1>
+                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addVaccineModal">
+                    <i class="bi bi-plus"></i> Record Vaccine
+                </button>
+            </div>
+            <p class="lead text-muted mb-4">Keep track of your baby's vaccination schedule and important health milestones</p>
+        </div>
+    </div>
+    
+    <!-- Vaccine Schedule Timeline -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">
+                        <i class="bi bi-calendar-check"></i> First Year Vaccine Schedule
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <!-- Birth -->
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-danger"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h5 class="text-danger">Birth</h5>
+                                    <small class="text-muted">Within 24 hours</small>
+                                </div>
+                                <div class="timeline-body">
+                                    <div class="vaccine-item" data-vaccine="HepB-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Hepatitis B (HepB) - 1st dose</strong>
+                                                <p class="mb-1 text-muted">Protects against hepatitis B virus</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <small class="text-info">
+                                                <i class="bi bi-info-circle"></i> 
+                                                <strong>Possible side effects:</strong> Soreness at injection site, low-grade fever
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 1-2 Months -->
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-primary"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h5 class="text-primary">1-2 Months</h5>
+                                    <small class="text-muted">4-8 weeks old</small>
+                                </div>
+                                <div class="timeline-body">
+                                    <div class="vaccine-item" data-vaccine="HepB-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Hepatitis B (HepB) - 2nd dose</strong>
+                                                <p class="mb-1 text-muted">Second dose of hepatitis B protection</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <small class="text-info">
+                                                <i class="bi bi-info-circle"></i> 
+                                                <strong>Possible side effects:</strong> Soreness, mild fever, fussiness
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 2 Months -->
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-success"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h5 class="text-success">2 Months</h5>
+                                    <small class="text-muted">8 weeks old</small>
+                                </div>
+                                <div class="timeline-body">
+                                    <div class="vaccine-item" data-vaccine="DTaP-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>DTaP - 1st dose</strong>
+                                                <p class="mb-1 text-muted">Diphtheria, Tetanus, Pertussis (Whooping Cough)</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <small class="text-info">
+                                                <i class="bi bi-info-circle"></i> 
+                                                <strong>Possible side effects:</strong> Fever, fussiness, drowsiness, injection site swelling
+                                            </small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="Hib-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Hib - 1st dose</strong>
+                                                <p class="mb-1 text-muted">Haemophilus influenzae type b</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <small class="text-info">
+                                                <i class="bi bi-info-circle"></i> 
+                                                <strong>Possible side effects:</strong> Mild fever, injection site redness
+                                            </small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="IPV-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>IPV - 1st dose</strong>
+                                                <p class="mb-1 text-muted">Inactivated Poliovirus</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <small class="text-info">
+                                                <i class="bi bi-info-circle"></i> 
+                                                <strong>Possible side effects:</strong> Minor soreness at injection site
+                                            </small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="PCV13-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>PCV13 - 1st dose</strong>
+                                                <p class="mb-1 text-muted">Pneumococcal Conjugate</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <small class="text-info">
+                                                <i class="bi bi-info-circle"></i> 
+                                                <strong>Possible side effects:</strong> Mild fever, decreased appetite, fussiness
+                                            </small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="RV-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>RV - 1st dose</strong>
+                                                <p class="mb-1 text-muted">Rotavirus (oral vaccine)</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <small class="text-info">
+                                                <i class="bi bi-info-circle"></i> 
+                                                <strong>Possible side effects:</strong> Mild diarrhea, vomiting, fussiness
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 4 Months -->
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-info"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h5 class="text-info">4 Months</h5>
+                                    <small class="text-muted">16 weeks old</small>
+                                </div>
+                                <div class="timeline-body">
+                                    <div class="vaccine-item" data-vaccine="DTaP-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>DTaP - 2nd dose</strong>
+                                                <p class="mb-1 text-muted">Diphtheria, Tetanus, Pertussis</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="Hib-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Hib - 2nd dose</strong>
+                                                <p class="mb-1 text-muted">Haemophilus influenzae type b</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="IPV-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>IPV - 2nd dose</strong>
+                                                <p class="mb-1 text-muted">Inactivated Poliovirus</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="PCV13-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>PCV13 - 2nd dose</strong>
+                                                <p class="mb-1 text-muted">Pneumococcal Conjugate</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="RV-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>RV - 2nd dose</strong>
+                                                <p class="mb-1 text-muted">Rotavirus</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 6 Months -->
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-warning"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h5 class="text-warning">6 Months</h5>
+                                    <small class="text-muted">24 weeks old</small>
+                                </div>
+                                <div class="timeline-body">
+                                    <div class="vaccine-item" data-vaccine="DTaP-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>DTaP - 3rd dose</strong>
+                                                <p class="mb-1 text-muted">Diphtheria, Tetanus, Pertussis</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="Hib-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Hib - 3rd dose</strong>
+                                                <p class="mb-1 text-muted">Haemophilus influenzae type b</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="IPV-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>IPV - 3rd dose</strong>
+                                                <p class="mb-1 text-muted">Inactivated Poliovirus</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="PCV13-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>PCV13 - 3rd dose</strong>
+                                                <p class="mb-1 text-muted">Pneumococcal Conjugate</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="RV-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>RV - 3rd dose</strong>
+                                                <p class="mb-1 text-muted">Rotavirus (if needed)</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="HepB-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>HepB - 3rd dose</strong>
+                                                <p class="mb-1 text-muted">Hepatitis B (final dose)</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 12-15 Months -->
+                        <div class="timeline-item">
+                            <div class="timeline-marker" style="background-color: #8b5cf6;"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h5 style="color: #8b5cf6;">12-15 Months</h5>
+                                    <small class="text-muted">1 year old</small>
+                                </div>
+                                <div class="timeline-body">
+                                    <div class="vaccine-item" data-vaccine="Hib-4">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Hib - 4th dose</strong>
+                                                <p class="mb-1 text-muted">Haemophilus influenzae type b</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="PCV13-4">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>PCV13 - 4th dose</strong>
+                                                <p class="mb-1 text-muted">Pneumococcal Conjugate</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="MMR-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>MMR - 1st dose</strong>
+                                                <p class="mb-1 text-muted">Measles, Mumps, Rubella</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <small class="text-info">
+                                                <i class="bi bi-info-circle"></i> 
+                                                <strong>Possible side effects:</strong> Fever, mild rash, swollen glands
+                                            </small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="Varicella-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Varicella - 1st dose</strong>
+                                                <p class="mb-1 text-muted">Chickenpox</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <small class="text-info">
+                                                <i class="bi bi-info-circle"></i> 
+                                                <strong>Possible side effects:</strong> Mild fever, soreness, mild chickenpox-like rash
+                                            </small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vaccine-item mt-3" data-vaccine="HepA-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>HepA - 1st dose</strong>
+                                                <p class="mb-1 text-muted">Hepatitis A</p>
+                                            </div>
+                                            <div class="vaccine-status">
+                                                <span class="badge bg-secondary">Not Given</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <small class="text-info">
+                                                <i class="bi bi-info-circle"></i> 
+                                                <strong>Possible side effects:</strong> Soreness at injection site, mild fever
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- My Vaccine Records -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title mb-0">
+                        <i class="bi bi-clipboard-check"></i> My Vaccine Records
+                    </h4>
+                    <button class="btn btn-outline-primary btn-sm" id="export-vaccines">
+                        <i class="bi bi-download"></i> Export Records
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Vaccine</th>
+                                    <th>Date Given</th>
+                                    <th>Age at Vaccination</th>
+                                    <th>Healthcare Provider</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vaccine-records-table">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted p-4">
+                                        <i class="bi bi-clipboard-x" style="font-size: 2rem;"></i>
+                                        <p class="mb-0">No vaccine records yet. Start by recording your first vaccine!</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Important Information -->
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-exclamation-circle"></i> After Vaccination Care
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6>What to Expect:</h6>
+                    <ul class="mb-3">
+                        <li><strong>Soreness:</strong> At injection site for 1-2 days</li>
+                        <li><strong>Fever:</strong> Low-grade fever is normal</li>
+                        <li><strong>Fussiness:</strong> May be more irritable for a day</li>
+                        <li><strong>Drowsiness:</strong> May sleep more than usual</li>
+                    </ul>
+                    
+                    <h6>How to Help:</h6>
+                    <ul class="mb-3">
+                        <li>Give extra cuddles and comfort</li>
+                        <li>Offer breast milk or formula more frequently</li>
+                        <li>Cool compress on injection site if swollen</li>
+                        <li>Dress baby in light clothing if feverish</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-telephone"></i> When to Call Your Doctor
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger mb-3">
+                        <strong>Call immediately if:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>High fever (over 105°F/40.5°C)</li>
+                            <li>Signs of severe allergic reaction</li>
+                            <li>Difficulty breathing</li>
+                            <li>Excessive, inconsolable crying for 3+ hours</li>
+                            <li>Seizure or convulsions</li>
+                        </ul>
+                    </div>
+                    
+                    <h6>Other reasons to call:</h6>
+                    <ul class="mb-0">
+                        <li>Fever lasting more than 2 days</li>
+                        <li>Injection site very red, hot, or hard</li>
+                        <li>Unusual behavior lasting more than 2 days</li>
+                        <li>Any concerns about baby's reaction</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Vaccine Record Modal -->
+<div class="modal fade" id="addVaccineModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-shield-plus"></i> Record Vaccine
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addVaccineForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Vaccine Name *</label>
+                            <select class="form-select" name="vaccine_name" required>
+                                <option value="">Select vaccine</option>
+                                <option value="HepB-1">Hepatitis B - 1st dose</option>
+                                <option value="HepB-2">Hepatitis B - 2nd dose</option>
+                                <option value="HepB-3">Hepatitis B - 3rd dose</option>
+                                <option value="DTaP-1">DTaP - 1st dose</option>
+                                <option value="DTaP-2">DTaP - 2nd dose</option>
+                                <option value="DTaP-3">DTaP - 3rd dose</option>
+                                <option value="Hib-1">Hib - 1st dose</option>
+                                <option value="Hib-2">Hib - 2nd dose</option>
+                                <option value="Hib-3">Hib - 3rd dose</option>
+                                <option value="Hib-4">Hib - 4th dose</option>
+                                <option value="IPV-1">IPV - 1st dose</option>
+                                <option value="IPV-2">IPV - 2nd dose</option>
+                                <option value="IPV-3">IPV - 3rd dose</option>
+                                <option value="PCV13-1">PCV13 - 1st dose</option>
+                                <option value="PCV13-2">PCV13 - 2nd dose</option>
+                                <option value="PCV13-3">PCV13 - 3rd dose</option>
+                                <option value="PCV13-4">PCV13 - 4th dose</option>
+                                <option value="RV-1">Rotavirus - 1st dose</option>
+                                <option value="RV-2">Rotavirus - 2nd dose</option>
+                                <option value="RV-3">Rotavirus - 3rd dose</option>
+                                <option value="MMR-1">MMR - 1st dose</option>
+                                <option value="Varicella-1">Varicella - 1st dose</option>
+                                <option value="HepA-1">Hepatitis A - 1st dose</option>
+                                <option value="Other">Other (specify in notes)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date Given *</label>
+                            <input type="date" class="form-control" name="date_given" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Healthcare Provider</label>
+                            <input type="text" class="form-control" name="provider" placeholder="Dr. Smith, ABC Pediatrics">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Lot Number</label>
+                            <input type="text" class="form-control" name="lot_number" placeholder="Vaccine lot number">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Reaction/Side Effects</label>
+                            <select class="form-select" name="reaction">
+                                <option value="none">No reaction</option>
+                                <option value="mild">Mild reaction</option>
+                                <option value="moderate">Moderate reaction</option>
+                                <option value="severe">Severe reaction</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Next Dose Due</label>
+                            <input type="date" class="form-control" name="next_dose_due">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" name="notes" rows="3" placeholder="Any additional notes about the vaccination, reactions, or concerns..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" id="saveVaccineRecord">
+                    <i class="bi bi-check"></i> Save Vaccine Record
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -38px;
+    top: 8px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 3px #e9ecef;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #dee2e6;
+}
+
+.timeline-header {
+    margin-bottom: 15px;
+}
+
+.timeline-header h5 {
+    margin-bottom: 5px;
+}
+
+.vaccine-item {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.vaccine-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.vaccine-status .badge {
+    font-size: 0.875rem;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/vaccines.js') }}"></script>
+{% endblock %}
