@@ -4,244 +4,436 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baby Tracker - Sign Up</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 1rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         
         .register-container {
             background: white;
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             width: 100%;
             max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .register-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 2rem;
         }
         
         .register-header h1 {
-            color: #667eea;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
         }
         
         .register-header p {
-            color: #666;
-            font-size: 1.1em;
+            color: #6c757d;
+            margin-bottom: 0;
         }
         
-        .form-group {
-            margin-bottom: 20px;
+        .form-floating {
+            margin-bottom: 1rem;
         }
         
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: bold;
-        }
-        
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        input[type="date"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-        
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus,
-        input[type="date"]:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .form-row {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .form-row .form-group {
-            flex: 1;
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
+        .form-floating .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1rem 0.75rem;
+            height: auto;
+            font-size: 1rem;
             transition: all 0.3s ease;
         }
         
-        .btn:hover {
+        .form-floating .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+        }
+        
+        .form-floating label {
+            color: #6c757d;
+            padding: 1rem 0.75rem;
+        }
+        
+        .optional-badge {
+            background: #e9ecef;
+            color: #6c757d;
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+        
+        .btn-register {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-register:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-register:active {
+            transform: translateY(0);
+        }
+        
+        .btn-register:disabled {
+            opacity: 0.7;
+            transform: none;
+            box-shadow: none;
         }
         
         .links {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 1.5rem;
         }
         
         .links a {
             color: #667eea;
             text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
         
         .links a:hover {
+            color: #764ba2;
             text-decoration: underline;
         }
         
         .alert {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            font-weight: bold;
-            display: none;
+            border-radius: 12px;
+            border: none;
+            margin-bottom: 1rem;
+            font-weight: 500;
         }
         
-        .alert.success {
-            background: #d4edda;
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
             color: #155724;
-            border: 1px solid #c3e6cb;
         }
         
-        .alert.error {
-            background: #f8d7da;
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da, #f1b0b7);
             color: #721c24;
-            border: 1px solid #f1b0b7;
         }
         
-        .optional-label {
-            font-size: 0.9em;
-            color: #999;
-            font-weight: normal;
+        .progress-container {
+            margin-bottom: 1rem;
         }
         
-        @media (max-width: 600px) {
-            .form-row {
-                flex-direction: column;
+        .password-strength {
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            background: #dc3545;
+        }
+        
+        .password-strength-bar.weak { background: #dc3545; width: 25%; }
+        .password-strength-bar.fair { background: #ffc107; width: 50%; }
+        .password-strength-bar.good { background: #fd7e14; width: 75%; }
+        .password-strength-bar.strong { background: #28a745; width: 100%; }
+        
+        /* Mobile optimizations */
+        @media (max-width: 576px) {
+            body {
+                padding: 0.5rem;
             }
             
             .register-container {
-                padding: 30px 20px;
+                padding: 1.5rem;
+                border-radius: 12px;
             }
+            
+            .register-header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .form-floating .form-control {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .row > .col-6 {
+                margin-bottom: 0.5rem;
+            }
+        }
+        
+        /* Loading animation */
+        .btn-loading {
+            pointer-events: none;
+        }
+        
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            margin: auto;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="register-container">
         <div class="register-header">
-            <h1>Baby Tracker</h1>
-            <p>Start your parenting journey!</p>
+            <h1><i class="bi bi-heart-fill"></i> Baby Tracker</h1>
+            <p>Start your parenting journey with us!</p>
         </div>
         
-        <div id="alert" class="alert"></div>
+        <div id="alert" class="alert d-none" role="alert"></div>
         
-        <form id="registerForm">
-            <div class="form-group">
-                <label for="name">Your Name:</label>
-                <input type="text" id="name" name="name" required>
+        <form id="registerForm" novalidate>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required autocomplete="name">
+                <label for="name">Your Name</label>
+                <div class="invalid-feedback">
+                    Please enter your name.
+                </div>
             </div>
             
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+            <div class="form-floating">
+                <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required autocomplete="email">
+                <label for="email">Email Address</label>
+                <div class="invalid-feedback">
+                    Please enter a valid email address.
+                </div>
             </div>
             
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required minlength="6">
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required minlength="6" autocomplete="new-password">
+                <label for="password">Password</label>
+                <div class="invalid-feedback">
+                    Password must be at least 6 characters long.
+                </div>
+                <div class="password-strength">
+                    <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                </div>
+                <small class="text-muted" id="passwordStrengthText"></small>
             </div>
             
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="baby_name">Baby's Name <span class="optional-label">(optional)</span>:</label>
-                    <input type="text" id="baby_name" name="baby_name">
+            <div class="row g-2">
+                <div class="col-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="baby_name" name="baby_name" placeholder="Baby's Name">
+                        <label for="baby_name">Baby's Name <span class="optional-badge">Optional</span></label>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="due_date">Due Date <span class="optional-label">(optional)</span>:</label>
-                    <input type="date" id="due_date" name="due_date">
+                <div class="col-6">
+                    <div class="form-floating">
+                        <input type="date" class="form-control" id="due_date" name="due_date">
+                        <label for="due_date">Due Date <span class="optional-badge">Optional</span></label>
+                    </div>
                 </div>
             </div>
             
-            <button type="submit" class="btn">Create Account</button>
+            <button type="submit" class="btn btn-register" id="registerBtn">
+                <span class="btn-text">Create Account</span>
+            </button>
         </form>
         
         <div class="links">
-            <a href="/login">Already have an account? Login</a>
+            <a href="/login">Already have an account? Sign in</a>
         </div>
     </div>
     
     <script>
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registerForm');
+            const btn = document.getElementById('registerBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const passwordInput = document.getElementById('password');
+            const strengthBar = document.getElementById('passwordStrengthBar');
+            const strengthText = document.getElementById('passwordStrengthText');
             
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                password: document.getElementById('password').value,
-                baby_name: document.getElementById('baby_name').value,
-                due_date: document.getElementById('due_date').value
-            };
+            // Password strength checker
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                const strength = checkPasswordStrength(password);
+                
+                strengthBar.className = `password-strength-bar ${strength.level}`;
+                strengthText.textContent = password.length > 0 ? `Password strength: ${strength.text}` : '';
+            });
             
-            try {
-                const response = await fetch('/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Clear previous validation
+                form.classList.remove('was-validated');
+                hideAlert();
+                
+                const formData = {
+                    name: document.getElementById('name').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    password: document.getElementById('password').value,
+                    baby_name: document.getElementById('baby_name').value.trim(),
+                    due_date: document.getElementById('due_date').value
+                };
+                
+                // Validation
+                let isValid = true;
+                
+                if (!formData.name) {
+                    document.getElementById('name').setCustomValidity('Name is required');
+                    isValid = false;
+                }
+                
+                if (!formData.email || !isValidEmail(formData.email)) {
+                    document.getElementById('email').setCustomValidity('Valid email is required');
+                    isValid = false;
+                }
+                
+                if (formData.password.length < 6) {
+                    document.getElementById('password').setCustomValidity('Password must be at least 6 characters');
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    form.classList.add('was-validated');
+                    return;
+                }
+                
+                // Clear custom validities
+                document.querySelectorAll('.form-control').forEach(input => {
+                    input.setCustomValidity('');
                 });
                 
-                const data = await response.json();
+                // Show loading state
+                btn.disabled = true;
+                btn.classList.add('btn-loading');
+                btnText.textContent = 'Creating account...';
                 
-                if (data.success) {
-                    showAlert(data.message, 'success');
-                    setTimeout(() => {
-                        window.location.href = '/login';
-                    }, 2000);
-                } else {
-                    showAlert(data.message, 'error');
+                try {
+                    const response = await fetch('/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showAlert(data.message, 'success');
+                        btnText.textContent = 'Success! Redirecting...';
+                        
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 2000);
+                    } else {
+                        showAlert(data.message, 'danger');
+                        resetButton();
+                    }
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    showAlert('Connection failed. Please check your internet and try again.', 'danger');
+                    resetButton();
                 }
-            } catch (error) {
-                showAlert('Registration failed. Please try again.', 'error');
+            });
+            
+            function resetButton() {
+                btn.disabled = false;
+                btn.classList.remove('btn-loading');
+                btnText.textContent = 'Create Account';
             }
+            
+            function showAlert(message, type) {
+                const alert = document.getElementById('alert');
+                alert.textContent = message;
+                alert.className = `alert alert-${type}`;
+                alert.classList.remove('d-none');
+                
+                if (type === 'success') {
+                    setTimeout(hideAlert, 8000);
+                }
+            }
+            
+            function hideAlert() {
+                document.getElementById('alert').classList.add('d-none');
+            }
+            
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+            
+            function checkPasswordStrength(password) {
+                let score = 0;
+                let feedback = [];
+                
+                if (password.length >= 8) score++;
+                if (/[a-z]/.test(password)) score++;
+                if (/[A-Z]/.test(password)) score++;
+                if (/\d/.test(password)) score++;
+                if (/[^A-Za-z0-9]/.test(password)) score++;
+                
+                const levels = ['weak', 'weak', 'fair', 'good', 'strong'];
+                const texts = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+                
+                return {
+                    score: score,
+                    level: levels[Math.min(score, 4)],
+                    text: texts[Math.min(score, 4)]
+                };
+            }
+            
+            // Auto-focus name field
+            document.getElementById('name').focus();
+            
+            // Clear validation on input
+            document.querySelectorAll('.form-control').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.setCustomValidity('');
+                    this.classList.remove('is-invalid');
+                });
+            });
         });
-        
-        function showAlert(message, type) {
-            const alert = document.getElementById('alert');
-            alert.textContent = message;
-            alert.className = `alert ${type}`;
-            alert.style.display = 'block';
-        }
     </script>
 </body>
 </html>

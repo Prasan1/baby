@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash, make_response
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from datetime import datetime, timedelta
+from functools import wraps
 import json
 import os
 import secrets
@@ -10,25 +11,47 @@ from models.database import init_db, db, User, Baby, FeedingRecord, SleepRecord,
 
 app = Flask(__name__)
 
+# Configuration
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'baby-tracker-fixed-secret-key-2024'
+
+# Session configuration
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = False  # Set True only for HTTPS
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
 # Email configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')  # This fixes the sender error
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
 
-# Secret key for token generation
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or secrets.token_hex(16)
+# Production settings
+if os.environ.get('FLASK_ENV') == 'production':
+    app.config['SESSION_COOKIE_SECURE'] = True
+    app.config['SESSION_COOKIE_DOMAIN'] = os.environ.get('DOMAIN')
 
-# Initialize Flask-Mail
+# Initialize extensions
 mail = Mail(app)
-
-# Token serializer for email verification and password reset
 serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-
-# Initialize database
 init_db(app)
+
+# Authentication decorator
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            if request.is_json:
+                return jsonify({'error': 'Authentication required'}), 401
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# ==============================================================================
+# MAIN ROUTES
+# ==============================================================================
 
 @app.route('/health_check')
 def health_check():
@@ -36,20 +59,45 @@ def health_check():
 
 @app.route('/')
 def index():
-    current_date = datetime.now().strftime('%B %d, %Y')
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('index.html', current_date=current_date)
+    return redirect(url_for('dashboard'))
 
 @app.route('/dashboard')
+@login_required
 def dashboard():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    return render_template('dashboard.html')
+    current_date = datetime.now().strftime('%B %d, %Y')
+    return render_template('dashboard.html', current_date=current_date)
+
+@app.route('/essentials')
+@login_required
+def essentials():
+    return render_template('essentials.html')
+
+@app.route('/care-guide')
+@login_required
+def care_guide():
+    return render_template('care_guide.html')
+
+@app.route('/tracking')
+@login_required
+def tracking():
+    return render_template('tracking.html')
+
+@app.route('/vaccines')
+@login_required
+def vaccines():
+    return render_template('vaccines.html')
+
+# ==============================================================================
+# AUTHENTICATION ROUTES
+# ==============================================================================
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
+        if 'user_id' in session:
+            return redirect(url_for('dashboard'))
         return render_template('login.html')
     
     try:
@@ -57,22 +105,22 @@ def login():
         email = data.get('email')
         password = data.get('password')
         
-        # Find user by email
         user = User.query.filter_by(email=email).first()
         
         if not user or not check_password_hash(user.password_hash, password):
             return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
         
-        # Skip email verification check if mail is not configured
         if app.config['MAIL_USERNAME'] and not user.email_verified:
             return jsonify({
                 'success': False, 
-                'message': 'Please verify your email address before logging in. Check your inbox for the verification link.'
+                'message': 'Please verify your email address before logging in.'
             }), 403
         
-        # Login successful - create session
+        # Create persistent session
+        session.permanent = True
         session['user_id'] = user.id
         session['user_name'] = user.name
+        session.modified = True
         
         return jsonify({
             'success': True, 
@@ -84,15 +132,12 @@ def login():
         app.logger.error(f"Login error: {e}")
         return jsonify({'success': False, 'message': 'Login failed. Please try again.'}), 500
 
-@app.route('/check-verification-status/<email>')
-def check_verification_status(email):
-    user = User.query.filter_by(email=email).first()
-    if user:
-        return jsonify({
-            'verified': user.email_verified,
-            'email': user.email
-        })
-    return jsonify({'verified': False}), 404
+@app.route('/logout')
+def logout():
+    session.clear()
+    response = make_response(redirect(url_for('login')))
+    response.set_cookie('session', '', expires=0)
+    return response
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -115,27 +160,24 @@ def register():
         
         # Create new user
         password_hash = generate_password_hash(password)
-        
-        # Set email_verified to True if mail is not configured, False otherwise
         email_verified = not bool(app.config['MAIL_USERNAME'])
         
         new_user = User(
             name=name,
             email=email,
             password_hash=password_hash,
-            email_verified=email_verified,  # Skip verification if mail not configured
-            baby_name=baby_name,  # This can be None
+            email_verified=email_verified,
+            baby_name=baby_name,
             created_at=datetime.utcnow()
         )
         
-        # Handle due_date properly
+        # Handle due_date
         if due_date:
             try:
                 new_user.due_date = datetime.strptime(due_date, '%Y-%m-%d').date()
             except ValueError:
                 return jsonify({'success': False, 'message': 'Invalid due date format'}), 400
         
-        # Add user to database
         db.session.add(new_user)
         db.session.commit()
         
@@ -153,7 +195,7 @@ def register():
             db.session.add(baby)
             db.session.commit()
         
-        # Send verification email only if mail is configured
+        # Send verification email if configured
         if app.config['MAIL_USERNAME']:
             try:
                 send_verification_email(new_user.email, new_user.name)
@@ -164,10 +206,7 @@ def register():
         else:
             message = 'Account created successfully! You can now log in.'
         
-        return jsonify({
-            'success': True, 
-            'message': message
-        })
+        return jsonify({'success': True, 'message': message})
         
     except Exception as e:
         db.session.rollback()
@@ -182,13 +221,11 @@ def forgot_password():
         
         user = User.query.filter_by(email=email).first()
         if not user:
-            # Don't reveal if email exists or not for security
             return jsonify({
                 'success': True, 
                 'message': 'If an account with this email exists, you will receive a password reset link.'
             })
         
-        # Send password reset email only if mail is configured
         if app.config['MAIL_USERNAME']:
             send_password_reset_email(user.email, user.name)
         
@@ -204,7 +241,7 @@ def forgot_password():
 @app.route('/verify-email/<token>')
 def verify_email(token):
     try:
-        email = serializer.loads(token, salt='email-verification', max_age=86400)  # 24 hours
+        email = serializer.loads(token, salt='email-verification', max_age=86400)
         
         user = User.query.filter_by(email=email).first()
         if user:
@@ -224,7 +261,7 @@ def verify_email(token):
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     try:
-        email = serializer.loads(token, salt='password-reset', max_age=3600)  # 1 hour
+        email = serializer.loads(token, salt='password-reset', max_age=3600)
     except SignatureExpired:
         flash('The password reset link has expired.', 'error')
         return redirect(url_for('login'))
@@ -269,99 +306,23 @@ def resend_verification():
         app.logger.error(f"Resend verification error: {e}")
         return jsonify({'success': False, 'message': 'Failed to send verification email.'}), 500
 
-def send_verification_email(email, name):
-    """Send email verification link to user"""
-    if not app.config['MAIL_USERNAME']:
-        return  # Skip if mail not configured
-        
-    try:
-        token = serializer.dumps(email, salt='email-verification')
-        verification_url = url_for('verify_email', token=token, _external=True)
-        
-        # Simple text email if template doesn't exist
-        html_content = f"""
-        <h2>Welcome to Baby Tracker, {name}!</h2>
-        <p>Please click the link below to verify your email address:</p>
-        <p><a href="{verification_url}">Verify Email Address</a></p>
-        <p>This link will expire in 24 hours.</p>
-        """
-        
-        msg = Message(
-            subject='Welcome to Baby Tracker - Verify Your Email',
-            recipients=[email],
-            html=html_content,
-            sender=app.config['MAIL_DEFAULT_SENDER']
-        )
-        mail.send(msg)
-    except Exception as e:
-        app.logger.error(f"Failed to send verification email: {e}")
-        raise
+@app.route('/check-verification-status/<email>')
+def check_verification_status(email):
+    user = User.query.filter_by(email=email).first()
+    if user:
+        return jsonify({
+            'verified': user.email_verified,
+            'email': user.email
+        })
+    return jsonify({'verified': False}), 404
 
-def send_password_reset_email(email, name):
-    """Send password reset link to user"""
-    if not app.config['MAIL_USERNAME']:
-        return  # Skip if mail not configured
-        
-    try:
-        token = serializer.dumps(email, salt='password-reset')
-        reset_url = url_for('reset_password', token=token, _external=True)
-        
-        # Simple text email if template doesn't exist
-        html_content = f"""
-        <h2>Password Reset Request</h2>
-        <p>Hi {name},</p>
-        <p>You requested a password reset. Click the link below to reset your password:</p>
-        <p><a href="{reset_url}">Reset Password</a></p>
-        <p>This link will expire in 1 hour.</p>
-        <p>If you didn't request this, please ignore this email.</p>
-        """
-        
-        msg = Message(
-            subject='Baby Tracker - Password Reset Request',
-            recipients=[email],
-            html=html_content,
-            sender=app.config['MAIL_DEFAULT_SENDER']
-        )
-        mail.send(msg)
-    except Exception as e:
-        app.logger.error(f"Failed to send password reset email: {e}")
-        raise
+# ==============================================================================
+# API ROUTES - FEEDING
+# ==============================================================================
 
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('login'))
-
-@app.route('/essentials')
-def essentials():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    return render_template('essentials.html')
-
-@app.route('/care-guide')
-def care_guide():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    return render_template('care_guide.html')
-
-@app.route('/tracking')
-def tracking():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    return render_template('tracking.html')
-
-@app.route('/vaccines')
-def vaccines():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    return render_template('vaccines.html')
-
-# API Routes for tracking
 @app.route('/api/feeding', methods=['GET', 'POST', 'DELETE'])
+@login_required
 def feeding_api():
-    if 'user_id' not in session:
-        return jsonify({'error': 'Not authenticated'}), 401
-    
     user_id = session['user_id']
     
     if request.method == 'POST':
@@ -417,11 +378,72 @@ def feeding_api():
         app.logger.error(f"Error fetching feeding records: {e}")
         return jsonify({'error': 'Failed to fetch feeding records'}), 500
 
-@app.route('/api/sleep', methods=['GET', 'POST', 'DELETE'])
-def sleep_api():
-    if 'user_id' not in session:
-        return jsonify({'error': 'Not authenticated'}), 401
+@app.route('/api/feeding/<int:feeding_id>', methods=['GET', 'PUT', 'DELETE'])
+@login_required
+def manage_feeding_record(feeding_id):
+    user_id = session['user_id']
+    feeding = FeedingRecord.query.filter_by(id=feeding_id, user_id=user_id).first()
     
+    if not feeding:
+        return jsonify({'error': 'Feeding record not found'}), 404
+    
+    if request.method == 'GET':
+        return jsonify({
+            'id': feeding.id,
+            'type': feeding.feeding_type,
+            'amount': feeding.amount,
+            'duration': feeding.duration,
+            'notes': feeding.notes,
+            'timestamp': feeding.timestamp.isoformat()
+        })
+    
+    elif request.method == 'PUT':
+        try:
+            data = request.get_json()
+            
+            if 'type' in data:
+                feeding.feeding_type = data['type']
+            if 'amount' in data:
+                feeding.amount = data['amount']  
+            if 'duration' in data:
+                feeding.duration = data['duration']
+            if 'notes' in data:
+                feeding.notes = data['notes']
+            if 'timestamp' in data:
+                feeding.timestamp = datetime.fromisoformat(data['timestamp'])
+                
+            db.session.commit()
+            
+            return jsonify({
+                'success': True, 
+                'message': 'Feeding record updated successfully!'
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Error updating feeding record: {e}")
+            return jsonify({'error': 'Failed to update feeding record'}), 500
+    
+    elif request.method == 'DELETE':
+        try:
+            db.session.delete(feeding)
+            db.session.commit()
+            return jsonify({
+                'success': True, 
+                'message': 'Feeding record deleted successfully!'
+            })
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Error deleting feeding record: {e}")
+            return jsonify({'error': 'Failed to delete feeding record'}), 500
+
+# ==============================================================================
+# API ROUTES - SLEEP
+# ==============================================================================
+
+@app.route('/api/sleep', methods=['GET', 'POST', 'DELETE'])
+@login_required
+def sleep_api():
     user_id = session['user_id']
     
     if request.method == 'POST':
@@ -473,11 +495,70 @@ def sleep_api():
         app.logger.error(f"Error fetching sleep records: {e}")
         return jsonify({'error': 'Failed to fetch sleep records'}), 500
 
-@app.route('/api/vaccines', methods=['GET', 'POST', 'DELETE'])
-def vaccines_api():
-    if 'user_id' not in session:
-        return jsonify({'error': 'Not authenticated'}), 401
+@app.route('/api/sleep/<int:sleep_id>', methods=['GET', 'PUT', 'DELETE']) 
+@login_required
+def manage_sleep_record(sleep_id):
+    user_id = session['user_id']
+    sleep = SleepRecord.query.filter_by(id=sleep_id, user_id=user_id).first()
     
+    if not sleep:
+        return jsonify({'error': 'Sleep record not found'}), 404
+    
+    if request.method == 'GET':
+        return jsonify({
+            'id': sleep.id,
+            'start_time': sleep.start_time.isoformat(),
+            'end_time': sleep.end_time.isoformat() if sleep.end_time else None,
+            'duration': str(sleep.end_time - sleep.start_time) if sleep.end_time else None,
+            'notes': sleep.notes
+        })
+    
+    elif request.method == 'PUT':
+        try:
+            data = request.get_json()
+            
+            if 'start_time' in data:
+                sleep.start_time = datetime.fromisoformat(data['start_time'])
+            if 'end_time' in data:
+                if data['end_time']:
+                    sleep.end_time = datetime.fromisoformat(data['end_time'])
+                else:
+                    sleep.end_time = None
+            if 'notes' in data:
+                sleep.notes = data['notes']
+                
+            db.session.commit()
+            
+            return jsonify({
+                'success': True, 
+                'message': 'Sleep record updated successfully!'
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Error updating sleep record: {e}")
+            return jsonify({'error': 'Failed to update sleep record'}), 500
+    
+    elif request.method == 'DELETE':
+        try:
+            db.session.delete(sleep)
+            db.session.commit()
+            return jsonify({
+                'success': True, 
+                'message': 'Sleep record deleted successfully!'
+            })
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Error deleting sleep record: {e}")
+            return jsonify({'error': 'Failed to delete sleep record'}), 500
+
+# ==============================================================================
+# API ROUTES - VACCINES
+# ==============================================================================
+
+@app.route('/api/vaccines', methods=['GET', 'POST', 'DELETE'])
+@login_required
+def vaccines_api():
     user_id = session['user_id']
     
     if request.method == 'POST':
@@ -528,75 +609,131 @@ def vaccines_api():
         app.logger.error(f"Error fetching vaccine records: {e}")
         return jsonify({'error': 'Failed to fetch vaccine records'}), 500
 
-# Add these new routes to your app.py after the existing API routes
-
-@app.route('/api/feeding/<int:feeding_id>', methods=['DELETE'])
-def delete_feeding(feeding_id):
-    if 'user_id' not in session:
-        return jsonify({'error': 'Not authenticated'}), 401
-    
+@app.route('/api/vaccines/<int:vaccine_id>', methods=['GET', 'PUT', 'DELETE'])
+@login_required
+def manage_vaccine_record(vaccine_id):
     user_id = session['user_id']
-    try:
-        feeding = FeedingRecord.query.filter_by(id=feeding_id, user_id=user_id).first()
-        if feeding is None:
-            return jsonify({'error': 'Feeding record not found'}), 404
-        
-        db.session.delete(feeding)
-        db.session.commit()
-        
-        return jsonify({'success': True, 'message': 'Feeding record deleted successfully'})
-    except Exception as e:
-        db.session.rollback()
-        app.logger.error(f"Error deleting feeding record: {e}")
-        return jsonify({'error': 'Failed to delete feeding record'}), 500
+    vaccine = VaccineRecord.query.filter_by(id=vaccine_id, user_id=user_id).first()
+    
+    if not vaccine:
+        return jsonify({'error': 'Vaccine record not found'}), 404
+    
+    if request.method == 'GET':
+        return jsonify({
+            'id': vaccine.id,
+            'vaccine_name': vaccine.vaccine_name,
+            'date_given': vaccine.date_given.isoformat(),
+            'notes': vaccine.notes
+        })
+    
+    elif request.method == 'PUT':
+        try:
+            data = request.get_json()
+            
+            if 'vaccine_name' in data:
+                vaccine.vaccine_name = data['vaccine_name']
+            if 'date_given' in data:
+                vaccine.date_given = datetime.fromisoformat(data['date_given'])
+            if 'notes' in data:
+                vaccine.notes = data['notes']
+                
+            db.session.commit()
+            
+            return jsonify({
+                'success': True, 
+                'message': 'Vaccine record updated successfully!'
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Error updating vaccine record: {e}")
+            return jsonify({'error': 'Failed to update vaccine record'}), 500
+    
+    elif request.method == 'DELETE':
+        try:
+            db.session.delete(vaccine)
+            db.session.commit()
+            return jsonify({
+                'success': True, 
+                'message': 'Vaccine record deleted successfully!'
+            })
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Error deleting vaccine record: {e}")
+            return jsonify({'error': 'Failed to delete vaccine record'}), 500
 
-@app.route('/api/sleep/<int:sleep_id>', methods=['DELETE'])
-def delete_sleep(sleep_id):
-    if 'user_id' not in session:
-        return jsonify({'error': 'Not authenticated'}), 401
-    
-    user_id = session['user_id']
-    
-    try:
-        sleep = SleepRecord.query.filter_by(id=sleep_id, user_id=user_id).first()
-        
-        if sleep is None:
-            return jsonify({'error': 'Sleep record not found'}), 404
-        
-        db.session.delete(sleep)
-        db.session.commit()
-        
-        return jsonify({'success': True, 'message': 'Sleep record deleted successfully'})
-    except Exception as e:
-        db.session.rollback()
-        app.logger.error(f"Error deleting sleep record: {e}")
-        return jsonify({'error': 'Failed to delete sleep record'}), 500
+# ==============================================================================
+# EMAIL HELPER FUNCTIONS
+# ==============================================================================
 
-@app.route('/api/sleep/<int:sleep_id>', methods=['PUT'])
-def update_sleep(sleep_id):
-    if 'user_id' not in session:
-        return jsonify({'error': 'Not authenticated'}), 401
-    
-    user_id = session['user_id']
-    
+def send_verification_email(email, name):
+    """Send email verification link to user"""
+    if not app.config['MAIL_USERNAME']:
+        return
+        
     try:
-        data = request.get_json()
-        sleep = SleepRecord.query.filter_by(id=sleep_id, user_id=user_id).first()
+        token = serializer.dumps(email, salt='email-verification')
+        verification_url = url_for('verify_email', token=token, _external=True)
         
-        if sleep is None:
-            return jsonify({'error': 'Sleep record not found'}), 404
+        html_content = f"""
+        <h2>Welcome to Baby Tracker, {name}!</h2>
+        <p>Please click the link below to verify your email address:</p>
+        <p><a href="{verification_url}">Verify Email Address</a></p>
+        <p>This link will expire in 24 hours.</p>
+        """
         
-        # Update end_time if provided
-        if 'end_time' in data:
-            sleep.end_time = datetime.fromisoformat(data['end_time'])
-        
-        db.session.commit()
-        
-        return jsonify({'success': True, 'message': 'Sleep record updated successfully'})
+        msg = Message(
+            subject='Welcome to Baby Tracker - Verify Your Email',
+            recipients=[email],
+            html=html_content,
+            sender=app.config['MAIL_DEFAULT_SENDER']
+        )
+        mail.send(msg)
     except Exception as e:
-        db.session.rollback()
-        app.logger.error(f"Error updating sleep record: {e}")
-        return jsonify({'error': 'Failed to update sleep record'}), 500
+        app.logger.error(f"Failed to send verification email: {e}")
+        raise
+
+def send_password_reset_email(email, name):
+    """Send password reset link to user"""
+    if not app.config['MAIL_USERNAME']:
+        return
+        
+    try:
+        token = serializer.dumps(email, salt='password-reset')
+        reset_url = url_for('reset_password', token=token, _external=True)
+        
+        html_content = f"""
+        <h2>Password Reset Request</h2>
+        <p>Hi {name},</p>
+        <p>You requested a password reset. Click the link below to reset your password:</p>
+        <p><a href="{reset_url}">Reset Password</a></p>
+        <p>This link will expire in 1 hour.</p>
+        <p>If you didn't request this, please ignore this email.</p>
+        """
+        
+        msg = Message(
+            subject='Baby Tracker - Password Reset Request',
+            recipients=[email],
+            html=html_content,
+            sender=app.config['MAIL_DEFAULT_SENDER']
+        )
+        mail.send(msg)
+    except Exception as e:
+        app.logger.error(f"Failed to send password reset email: {e}")
+        raise
+
+# ==============================================================================
+# DEBUG ROUTES (Remove in production)
+# ==============================================================================
+
+@app.route('/debug-session')
+def debug_session():
+    """Debug route to check session data"""
+    return jsonify({
+        'session_data': dict(session),
+        'has_user_id': 'user_id' in session,
+        'session_permanent': session.permanent
+    })
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=False)
+    app.run(host='0.0.0.0', port=5000, debug=True)

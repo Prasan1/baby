@@ -1,7 +1,9 @@
-// Tracking page JavaScript
+// Updated tracking.js with edit/delete functionality
 var feedingChart, sleepChart;
 var feedingData = [];
 var sleepData = [];
+var editingFeedingId = null;
+var editingSleepId = null;
 
 $(document).ready(function() {
     // Initialize charts
@@ -34,6 +36,15 @@ $(document).ready(function() {
     
     // Refresh data every 2 minutes
     setInterval(loadTrackingData, 2 * 60 * 1000);
+    
+    // Reset forms when modals close
+    $('#addFeedingModal').on('hidden.bs.modal', function() {
+        resetFeedingForm();
+    });
+    
+    $('#addSleepModal').on('hidden.bs.modal', function() {
+        resetSleepForm();
+    });
 });
 
 function initializeCharts() {
@@ -46,8 +57,8 @@ function initializeCharts() {
             datasets: [{
                 label: 'Feedings per Day',
                 data: [],
-                backgroundColor: chartColors.primary,
-                borderColor: chartColors.primary,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
             }]
         },
@@ -84,7 +95,7 @@ function initializeCharts() {
                 label: 'Sleep Duration (hours)',
                 data: [],
                 backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                borderColor: chartColors.success,
+                borderColor: 'rgba(40, 167, 69, 1)',
                 borderWidth: 2,
                 fill: true
             }]
@@ -120,7 +131,7 @@ function loadTrackingData() {
     // Load feeding data
     makeApiCall('GET', '/api/feeding')
         .then(function(data) {
-            feedingData = data;
+            feedingData = data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             updateFeedingChart();
             updateFeedingTable();
             updateSummaryStats();
@@ -132,13 +143,292 @@ function loadTrackingData() {
     // Load sleep data
     makeApiCall('GET', '/api/sleep')
         .then(function(data) {
-            sleepData = data;
+            sleepData = data.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
             updateSleepChart();
             updateSleepTable();
             updateSummaryStats();
         })
         .catch(function(error) {
             console.error('Error loading sleep data:', error);
+        });
+}
+
+function updateFeedingTable() {
+    var tableBody = $('#feeding-table-body');
+    tableBody.empty();
+    
+    if (feedingData.length === 0) {
+        tableBody.html('<tr><td colspan="6" class="text-center text-muted p-4">No feeding records yet</td></tr>');
+        return;
+    }
+    
+    feedingData.slice(0, 20).forEach(function(feeding) {
+        var row = `
+            <tr>
+                <td>${formatDateTime(feeding.timestamp)}</td>
+                <td>
+                    <span class="badge bg-primary">${capitalizeFirst(feeding.type)}</span>
+                </td>
+                <td>${feeding.amount ? feeding.amount + ' ml' : '-'}</td>
+                <td>${feeding.duration ? feeding.duration + ' min' : '-'}</td>
+                <td>${feeding.notes || '-'}</td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" onclick="editFeedingRecord(${feeding.id})" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="deleteFeedingRecord(${feeding.id})" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+        tableBody.append(row);
+    });
+}
+
+function updateSleepTable() {
+    var tableBody = $('#sleep-table-body');
+    tableBody.empty();
+    
+    if (sleepData.length === 0) {
+        tableBody.html('<tr><td colspan="6" class="text-center text-muted p-4">No sleep records yet</td></tr>');
+        return;
+    }
+    
+    sleepData.slice(0, 20).forEach(function(sleep) {
+        var duration = sleep.end_time ? calculateDuration(sleep.start_time, sleep.end_time) : 
+                      '<span class="badge bg-success">Ongoing</span>';
+        
+        var row = `
+            <tr>
+                <td>${formatDateTime(sleep.start_time)}</td>
+                <td>${sleep.end_time ? formatDateTime(sleep.end_time) : '<span class="text-muted">-</span>'}</td>
+                <td>${duration}</td>
+                <td>${sleep.notes || '-'}</td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" onclick="editSleepRecord(${sleep.id})" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="deleteSleepRecord(${sleep.id})" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        ${!sleep.end_time ? '<button class="btn btn-success btn-sm ms-1" onclick="endSleepRecord(' + sleep.id + ')" title="End Sleep"><i class="bi bi-stop"></i></button>' : ''}
+                    </div>
+                </td>
+            </tr>
+        `;
+        tableBody.append(row);
+    });
+}
+
+function saveFeedingRecord() {
+    var formData = {};
+    $('#addFeedingForm').serializeArray().forEach(function(field) {
+        if (field.name === 'amount' && field.value) {
+            var unit = $('#addFeedingForm select[name="amount_unit"]').val() || 'ml';
+            formData.amount = parseFloat(field.value);
+            if (unit === 'oz') {
+                formData.amount = formData.amount * 29.5735; // Convert oz to ml
+            }
+        } else {
+            formData[field.name] = field.value;
+        }
+    });
+    
+    // Validation
+    if (!formData.type || !formData.timestamp) {
+        showAlert('Please fill in all required fields.', 'danger');
+        return;
+    }
+    
+    var btn = $('#saveFeedingRecord');
+    var originalText = btn.html();
+    btn.html('<i class="bi bi-hourglass-split"></i> Saving...').prop('disabled', true);
+    
+    var method = editingFeedingId ? 'PUT' : 'POST';
+    var url = editingFeedingId ? `/api/feeding/${editingFeedingId}` : '/api/feeding';
+    
+    makeApiCall(method, url, formData)
+        .then(function(response) {
+            if (response.success) {
+                showAlert(editingFeedingId ? 'Feeding updated successfully!' : 'Feeding recorded successfully!', 'success');
+                $('#addFeedingModal').modal('hide');
+                resetFeedingForm();
+                loadTrackingData();
+            } else {
+                showAlert('Failed to save feeding record.', 'danger');
+            }
+        })
+        .catch(function(error) {
+            showAlert('Error saving feeding record: ' + error.message, 'danger');
+        })
+        .finally(function() {
+            btn.html(originalText).prop('disabled', false);
+        });
+}
+
+function saveSleepRecord() {
+    var formData = {};
+    $('#addSleepForm').serializeArray().forEach(function(field) {
+        formData[field.name] = field.value;
+    });
+    
+    // Validation
+    if (!formData.start_time) {
+        showAlert('Please fill in the start time.', 'danger');
+        return;
+    }
+    
+    // Validate end time is after start time
+    if (formData.end_time && new Date(formData.end_time) <= new Date(formData.start_time)) {
+        showAlert('End time must be after start time.', 'danger');
+        return;
+    }
+    
+    var btn = $('#saveSleepRecord');
+    var originalText = btn.html();
+    btn.html('<i class="bi bi-hourglass-split"></i> Saving...').prop('disabled', true);
+    
+    var method = editingSleepId ? 'PUT' : 'POST';
+    var url = editingSleepId ? `/api/sleep/${editingSleepId}` : '/api/sleep';
+    
+    makeApiCall(method, url, formData)
+        .then(function(response) {
+            if (response.success) {
+                showAlert(editingSleepId ? 'Sleep updated successfully!' : 'Sleep recorded successfully!', 'success');
+                $('#addSleepModal').modal('hide');
+                resetSleepForm();
+                loadTrackingData();
+            } else {
+                showAlert('Failed to save sleep record.', 'danger');
+            }
+        })
+        .catch(function(error) {
+            showAlert('Error saving sleep record: ' + error.message, 'danger');
+        })
+        .finally(function() {
+            btn.html(originalText).prop('disabled', false);
+        });
+}
+
+function editFeedingRecord(id) {
+    editingFeedingId = id;
+    
+    // Get feeding record data
+    makeApiCall('GET', `/api/feeding/${id}`)
+        .then(function(feeding) {
+            // Populate form
+            $('#addFeedingForm select[name="type"]').val(feeding.type);
+            $('#addFeedingForm input[name="amount"]').val(feeding.amount || '');
+            $('#addFeedingForm input[name="duration"]').val(feeding.duration || '');
+            $('#addFeedingForm input[name="timestamp"]').val(feeding.timestamp.slice(0, 16));
+            $('#addFeedingForm textarea[name="notes"]').val(feeding.notes || '');
+            
+            // Update modal title and button
+            $('#addFeedingModal .modal-title').text('Edit Feeding Record');
+            $('#saveFeedingRecord').text('Update Record');
+            
+            $('#addFeedingModal').modal('show');
+        })
+        .catch(function(error) {
+            showAlert('Error loading feeding record: ' + error.message, 'danger');
+        });
+}
+
+function editSleepRecord(id) {
+    editingSleepId = id;
+    
+    // Get sleep record data
+    makeApiCall('GET', `/api/sleep/${id}`)
+        .then(function(sleep) {
+            // Populate form
+            $('#addSleepForm input[name="start_time"]').val(sleep.start_time.slice(0, 16));
+            $('#addSleepForm input[name="end_time"]').val(sleep.end_time ? sleep.end_time.slice(0, 16) : '');
+            $('#addSleepForm textarea[name="notes"]').val(sleep.notes || '');
+            
+            // Update modal title and button
+            $('#addSleepModal .modal-title').text('Edit Sleep Record');
+            $('#saveSleepRecord').text('Update Record');
+            
+            $('#addSleepModal').modal('show');
+        })
+        .catch(function(error) {
+            showAlert('Error loading sleep record: ' + error.message, 'danger');
+        });
+}
+
+function deleteFeedingRecord(id) {
+    if (!confirm('Are you sure you want to delete this feeding record?')) {
+        return;
+    }
+    
+    makeApiCall('DELETE', `/api/feeding/${id}`)
+        .then(function(response) {
+            if (response.success) {
+                showAlert('Feeding record deleted successfully!', 'success');
+                loadTrackingData();
+            } else {
+                showAlert('Failed to delete feeding record.', 'danger');
+            }
+        })
+        .catch(function(error) {
+            showAlert('Error deleting feeding record: ' + error.message, 'danger');
+        });
+}
+
+function deleteSleepRecord(id) {
+    if (!confirm('Are you sure you want to delete this sleep record?')) {
+        return;
+    }
+    
+    makeApiCall('DELETE', `/api/sleep/${id}`)
+        .then(function(response) {
+            if (response.success) {
+                showAlert('Sleep record deleted successfully!', 'success');
+                loadTrackingData();
+            } else {
+                showAlert('Failed to delete sleep record.', 'danger');
+            }
+        })
+        .catch(function(error) {
+            showAlert('Error deleting sleep record: ' + error.message, 'danger');
+        });
+}
+
+function resetFeedingForm() {
+    editingFeedingId = null;
+    $('#addFeedingForm')[0].reset();
+    $('#addFeedingModal .modal-title').text('Add Feeding Record');
+    $('#saveFeedingRecord').text('Save Record');
+}
+
+function resetSleepForm() {
+    editingSleepId = null;
+    $('#addSleepForm')[0].reset();
+    $('#addSleepModal .modal-title').text('Add Sleep Record');
+    $('#saveSleepRecord').text('Save Record');
+}
+
+function endSleepRecord(id) {
+    var now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    
+    makeApiCall('PUT', `/api/sleep/${id}`, {
+        end_time: now.toISOString()
+    })
+        .then(function(response) {
+            if (response.success) {
+                showAlert('Sleep session ended!', 'success');
+                loadTrackingData();
+            } else {
+                showAlert('Failed to end sleep session.', 'danger');
+            }
+        })
+        .catch(function(error) {
+            showAlert('Error ending sleep session: ' + error.message, 'danger');
         });
 }
 
@@ -214,67 +504,6 @@ function updateSleepChart() {
     sleepChart.update();
 }
 
-function updateFeedingTable() {
-    var tableBody = $('#feeding-table-body');
-    tableBody.empty();
-    
-    if (feedingData.length === 0) {
-        tableBody.html('<tr><td colspan="5" class="text-center text-muted p-4">No feeding records yet</td></tr>');
-        return;
-    }
-    
-    feedingData.slice(0, 20).forEach(function(feeding) {
-        var row = `
-            <tr>
-                <td>${formatDateTime(feeding.timestamp)}</td>
-                <td>
-                    <span class="badge bg-primary">${capitalizeFirst(feeding.type)}</span>
-                </td>
-                <td>${feeding.amount ? feeding.amount + ' ml' : '-'}</td>
-                <td>${feeding.duration ? feeding.duration + ' min' : '-'}</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteFeedingRecord(${feeding.id})">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                    ${feeding.notes ? '<i class="bi bi-chat-dots text-info ms-1" title="' + feeding.notes + '"></i>' : ''}
-                </td>
-            </tr>
-        `;
-        tableBody.append(row);
-    });
-}
-
-function updateSleepTable() {
-    var tableBody = $('#sleep-table-body');
-    tableBody.empty();
-    
-    if (sleepData.length === 0) {
-        tableBody.html('<tr><td colspan="5" class="text-center text-muted p-4">No sleep records yet</td></tr>');
-        return;
-    }
-    
-    sleepData.slice(0, 20).forEach(function(sleep) {
-        var duration = sleep.end_time ? calculateDuration(sleep.start_time, sleep.end_time) : 
-                      '<span class="badge bg-success">Ongoing</span>';
-        
-        var row = `
-            <tr>
-                <td>${formatDateTime(sleep.start_time)}</td>
-                <td>${sleep.end_time ? formatDateTime(sleep.end_time) : '<span class="text-muted">-</span>'}</td>
-                <td>${duration}</td>
-                <td>${sleep.notes || '-'}</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteSleepRecord(${sleep.id})">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                    ${!sleep.end_time ? '<button class="btn btn-sm btn-success ms-1" onclick="endSleepRecord(' + sleep.id + ')"><i class="bi bi-stop"></i></button>' : ''}
-                </td>
-            </tr>
-        `;
-        tableBody.append(row);
-    });
-}
-
 function updateSummaryStats() {
     var today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -326,191 +555,6 @@ function updateSummaryStats() {
                       .addClass(currentlyAsleep ? 'text-success' : 'text-info');
 }
 
-function saveFeedingRecord() {
-    var formData = {};
-    $('#addFeedingForm').serializeArray().forEach(function(field) {
-        if (field.name === 'amount' && field.value) {
-            // Handle amount with unit
-            var unit = $('#addFeedingForm select[name="amount_unit"]').val();
-            formData.amount = parseFloat(field.value);
-            if (unit === 'oz') {
-                formData.amount = formData.amount * 29.5735; // Convert oz to ml
-            }
-        } else {
-            formData[field.name] = field.value;
-        }
-    });
-    
-    // Validation
-    if (!formData.type || !formData.timestamp) {
-        showAlert('Please fill in all required fields.', 'danger');
-        return;
-    }
-    
-    var btn = $('#saveFeedingRecord');
-    var originalText = btn.html();
-    btn.html('<i class="bi bi-hourglass-split"></i> Saving...').prop('disabled', true);
-    
-    makeApiCall('POST', '/api/feeding', formData)
-        .then(function(response) {
-            if (response.success) {
-                showAlert('Feeding recorded successfully!', 'success');
-                $('#addFeedingModal').modal('hide');
-                $('#addFeedingForm')[0].reset();
-                loadTrackingData();
-            } else {
-                showAlert('Failed to save feeding record.', 'danger');
-            }
-        })
-        .catch(function(error) {
-            showAlert('Error saving feeding record: ' + error.message, 'danger');
-        })
-        .finally(function() {
-            btn.html(originalText).prop('disabled', false);
-        });
-}
-
-function saveSleepRecord() {
-    var formData = {};
-    $('#addSleepForm').serializeArray().forEach(function(field) {
-        formData[field.name] = field.value;
-    });
-    
-    // Validation
-    if (!formData.start_time) {
-        showAlert('Please fill in the start time.', 'danger');
-        return;
-    }
-    
-    // Validate end time is after start time
-    if (formData.end_time && new Date(formData.end_time) <= new Date(formData.start_time)) {
-        showAlert('End time must be after start time.', 'danger');
-        return;
-    }
-    
-    var btn = $('#saveSleepRecord');
-    var originalText = btn.html();
-    btn.html('<i class="bi bi-hourglass-split"></i> Saving...').prop('disabled', true);
-    
-    makeApiCall('POST', '/api/sleep', formData)
-        .then(function(response) {
-            if (response.success) {
-                showAlert('Sleep recorded successfully!', 'success');
-                $('#addSleepModal').modal('hide');
-                $('#addSleepForm')[0].reset();
-                loadTrackingData();
-            } else {
-                showAlert('Failed to save sleep record.', 'danger');
-            }
-        })
-        .catch(function(error) {
-            showAlert('Error saving sleep record: ' + error.message, 'danger');
-        })
-        .finally(function() {
-            btn.html(originalText).prop('disabled', false);
-        });
-}
-
-
-
-// function deleteFeedingRecord(id) {
-//     if (!confirm('Are you sure you want to delete this feeding record?')) {
-//         return;
-//     }
-    
-//     makeApiCall('DELETE', `/api/feeding/${id}`)
-//         .then(function(response) {
-//             if (response.success) {
-//                 showAlert('Feeding record deleted successfully!', 'success');
-//                 loadTrackingData();
-//             } else {
-//                 showAlert('Failed to delete feeding record.', 'danger');
-//             }
-//         })
-//         .catch(function(error) {
-//             showAlert('Error deleting feeding record: ' + error.message, 'danger');
-//         });
-// }
-
-// function deleteSleepRecord(id) {
-//     if (!confirm('Are you sure you want to delete this sleep record?')) {
-//         return;
-//     }
-    
-//     makeApiCall('DELETE', `/api/sleep/${id}`)
-//         .then(function(response) {
-//             if (response.success) {
-//                 showAlert('Sleep record deleted successfully!', 'success');
-//                 loadTrackingData();
-//             } else {
-//                 showAlert('Failed to delete sleep record.', 'danger');
-//             }
-//         })
-//         .catch(function(error) {
-//             showAlert('Error deleting sleep record: ' + error.message, 'danger');
-//         });
-// }
-
-function deleteFeedingRecord(id) {
-    if (!confirm('Are you sure you want to delete this feeding record?')) {
-        return;
-    }
-    
-    // Send ID in request body instead of URL
-    makeApiCall('DELETE', '/api/feeding', { id: id })
-        .then(function(response) {
-            if (response.success) {
-                showAlert('Feeding record deleted successfully!', 'success');
-                loadTrackingData();
-            } else {
-                showAlert('Failed to delete feeding record.', 'danger');
-            }
-        })
-        .catch(function(error) {
-            showAlert('Error deleting feeding record: ' + error.message, 'danger');
-        });
-}
-
-function deleteSleepRecord(id) {
-    if (!confirm('Are you sure you want to delete this sleep record?')) {
-        return;
-    }
-    
-    // Send ID in request body instead of URL  
-    makeApiCall('DELETE', '/api/sleep', { id: id })
-        .then(function(response) {
-            if (response.success) {
-                showAlert('Sleep record deleted successfully!', 'success');
-                loadTrackingData();
-            } else {
-                showAlert('Failed to delete sleep record.', 'danger');
-            }
-        })
-        .catch(function(error) {
-            showAlert('Error deleting sleep record: ' + error.message, 'danger');
-        });
-}
-
-function endSleepRecord(id) {
-    var now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    
-    makeApiCall('PUT', `/api/sleep/${id}`, {
-        end_time: now.toISOString()
-    })
-        .then(function(response) {
-            if (response.success) {
-                showAlert('Sleep session ended!', 'success');
-                loadTrackingData();
-            } else {
-                showAlert('Failed to end sleep session.', 'danger');
-            }
-        })
-        .catch(function(error) {
-            showAlert('Error ending sleep session: ' + error.message, 'danger');
-        });
-}
-
 function exportFeedingData() {
     if (feedingData.length === 0) {
         showAlert('No feeding data to export.', 'warning');
@@ -554,19 +598,21 @@ function exportSleepData() {
 function setDefaultTimes() {
     // Set current time for feeding modal when opened
     $('#addFeedingModal').on('show.bs.modal', function() {
-        var now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        $('#addFeedingForm input[name="timestamp"]').val(now.toISOString().slice(0, 16));
+        if (!editingFeedingId) {
+            var now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            $('#addFeedingForm input[name="timestamp"]').val(now.toISOString().slice(0, 16));
+        }
     });
     
     // Set current time for sleep modal when opened
     $('#addSleepModal').on('show.bs.modal', function() {
-        var now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        $('#addSleepForm input[name="start_time"]').val(now.toISOString().slice(0, 16));
-        
-        // Clear end time
-        $('#addSleepForm input[name="end_time"]').val('');
+        if (!editingSleepId) {
+            var now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            $('#addSleepForm input[name="start_time"]').val(now.toISOString().slice(0, 16));
+            $('#addSleepForm input[name="end_time"]').val('');
+        }
     });
 }
 
@@ -584,3 +630,123 @@ $('#feeding-chart-tab, #sleep-chart-tab').on('shown.bs.tab', function(e) {
         }
     }, 100);
 });
+
+// Helper functions
+function formatDateTime(dateString) {
+    var date = new Date(dateString);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+}
+
+function formatDate(dateString) {
+    var date = new Date(dateString);
+    return date.toLocaleDateString();
+}
+
+function formatTime(dateString) {
+    var date = new Date(dateString);
+    return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+}
+
+function calculateDuration(startTime, endTime) {
+    if (!startTime || !endTime) return null;
+    
+    var start = new Date(startTime);
+    var end = new Date(endTime);
+    var diff = end.getTime() - start.getTime();
+    
+    var hours = Math.floor(diff / (1000 * 60 * 60));
+    var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    
+    var result = '';
+    if (hours > 0) {
+        result += hours + 'h ';
+    }
+    result += minutes + 'm';
+    
+    return result;
+}
+
+function makeApiCall(method, url, data = null) {
+    return new Promise((resolve, reject) => {
+        var settings = {
+            url: url,
+            method: method,
+            contentType: 'application/json',
+            success: function(response) {
+                resolve(response);
+            },
+            error: function(xhr, status, error) {
+                console.error('API Error:', error);
+                reject({
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    message: xhr.responseJSON ? xhr.responseJSON.message : error
+                });
+            }
+        };
+        
+        if (data && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
+            settings.data = JSON.stringify(data);
+        }
+        
+        $.ajax(settings);
+    });
+}
+
+function showAlert(message, type = 'info') {
+    var alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    // Find or create alert container
+    var container = $('#alert-container');
+    if (!container.length) {
+        container = $('<div id="alert-container"></div>').prependTo('.container');
+    }
+    
+    container.html(alertHtml);
+    
+    // Auto-hide after 5 seconds
+    setTimeout(function() {
+        $('.alert').fadeOut();
+    }, 5000);
+}
+
+function exportToCSV(data, filename) {
+    if (!data || data.length === 0) {
+        showAlert('No data to export', 'warning');
+        return;
+    }
+    
+    var csv = '';
+    var headers = Object.keys(data[0]);
+    csv += headers.join(',') + '\n';
+    
+    data.forEach(function(row) {
+        var values = headers.map(function(header) {
+            var value = row[header];
+            if (value && typeof value === 'string') {
+                if (value.includes(',') || value.includes('"')) {
+                    value = '"' + value.replace(/"/g, '""') + '"';
+                }
+            }
+            return value || '';
+        });
+        csv += values.join(',') + '\n';
+    });
+    
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var link = document.createElement('a');
+    var url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showAlert('Data exported successfully!', 'success');
+}

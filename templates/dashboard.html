@@ -1,216 +1,350 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baby Tracker - Dashboard</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        
-        .header h1 {
-            color: #667eea;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        
-        .welcome-message {
-            font-size: 1.2em;
-            color: #666;
-            margin-bottom: 20px;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .nav-links a {
-            background: #667eea;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-links a:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-        }
-        
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .dashboard-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .dashboard-card h2 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 1.5em;
-        }
-        
-        .dashboard-card p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-        
-        .card-button {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 25px;
-            text-decoration: none;
-            display: inline-block;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .card-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .logout-btn {
-            background: #dc3545;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: bold;
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            transition: all 0.3s ease;
-        }
-        
-        .logout-btn:hover {
-            background: #c82333;
-            transform: translateY(-2px);
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .nav-links {
-                gap: 10px;
-            }
-            
-            .nav-links a {
-                padding: 8px 15px;
-                font-size: 0.9em;
-            }
-            
-            .logout-btn {
-                position: static;
-                margin: 20px auto;
-                display: block;
-                width: fit-content;
-            }
-        }
-    </style>
-</head>
-<body>
-    <a href="/logout" class="logout-btn">Logout</a>
-    
-    <div class="container">
-        <div class="header">
-            <h1>Baby Tracker Dashboard</h1>
-            <p class="welcome-message">Welcome back! Track your baby's daily activities and milestones.</p>
-            
-            <div class="nav-links">
-                <a href="/tracking">Track Activities</a>
-                <a href="/vaccines">Vaccine Records</a>
-                <a href="/essentials">Baby Essentials</a>
-                <a href="/care-guide">Care Guide</a>
-            </div>
-        </div>
-        
-        <div class="dashboard-grid">
-            <div class="dashboard-card">
-                <h2>📱 Track Activities</h2>
-                <p>Record feeding times, sleep patterns, diaper changes, and other daily activities. Keep a comprehensive log of your baby's routine.</p>
-                <a href="/tracking" class="card-button">Start Tracking</a>
-            </div>
-            
-            <div class="dashboard-card">
-                <h2>💉 Vaccine Schedule</h2>
-                <p>Keep track of your baby's vaccination records and upcoming appointments. Never miss an important immunization.</p>
-                <a href="/vaccines" class="card-button">View Vaccines</a>
-            </div>
-            
-            <div class="dashboard-card">
-                <h2>🍼 Baby Essentials</h2>
-                <p>Discover essential items for your baby's care, from feeding supplies to safety equipment. Get recommendations for every stage.</p>
-                <a href="/essentials" class="card-button">Browse Essentials</a>
-            </div>
-            
-            <div class="dashboard-card">
-                <h2>📚 Care Guide</h2>
-                <p>Access helpful tips, guides, and expert advice on baby care, development milestones, and parenting resources.</p>
-                <a href="/care-guide" class="card-button">Read Guide</a>
-            </div>
-        </div>
-        
-        <div class="dashboard-card">
-            <h2>📊 Recent Activity</h2>
-            <p>Your recent tracking activities will appear here. Start logging activities to see your baby's patterns and trends.</p>
-            <div style="text-align: center; padding: 20px;">
-                <p style="color: #999; font-style: italic;">No recent activities. Start tracking to see data here!</p>
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Baby Tracker{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3">
+                <h1 class="h2 mb-2 mb-sm-0">
+                    <i class="bi bi-house-heart text-primary"></i> 
+                    Welcome Back!
+                </h1>
+                <div class="text-muted small">
+                    <i class="bi bi-calendar3"></i> {{ current_date or 'Today' }}
+                </div>
             </div>
         </div>
     </div>
-</body>
-</html>
+    
+    <!-- Quick Actions Grid -->
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <h3 class="h5 mb-3 text-muted">Quick Actions</h3>
+        </div>
+        
+        <div class="col-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm quick-action-card" onclick="location.href='/tracking'">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-cup-straw display-5 text-primary mb-2"></i>
+                    <h6 class="card-title mb-1">Track Feeding</h6>
+                    <small class="text-muted d-none d-sm-block">Log feeding sessions</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm quick-action-card" onclick="location.href='/tracking'">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-moon-stars display-5 text-success mb-2"></i>
+                    <h6 class="card-title mb-1">Track Sleep</h6>
+                    <small class="text-muted d-none d-sm-block">Record sleep patterns</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm quick-action-card" onclick="location.href='/vaccines'">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-shield-plus display-5 text-warning mb-2"></i>
+                    <h6 class="card-title mb-1">Vaccines</h6>
+                    <small class="text-muted d-none d-sm-block">Track immunizations</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm quick-action-card" onclick="location.href='/tracking'">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-graph-up display-5 text-info mb-2"></i>
+                    <h6 class="card-title mb-1">View Charts</h6>
+                    <small class="text-muted d-none d-sm-block">See progress</small>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- Information Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <h3 class="h5 mb-3 text-muted">Resources</h3>
+        </div>
+        
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-primary text-white py-2">
+                    <h6 class="card-title mb-0">
+                        <i class="bi bi-list-check"></i> Baby Essentials
+                    </h6>
+                </div>
+                <div class="card-body p-3">
+                    <p class="card-text small mb-3">Everything you need for your newborn - from feeding supplies to safety items.</p>
+                    <ul class="list-unstyled small mb-3">
+                        <li><i class="bi bi-check2 text-success"></i> Feeding supplies</li>
+                        <li><i class="bi bi-check2 text-success"></i> Clothing essentials</li>
+                        <li><i class="bi bi-check2 text-success"></i> Sleep & safety items</li>
+                    </ul>
+                    <a href="{{ url_for('essentials') }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-arrow-right"></i> View List
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-success text-white py-2">
+                    <h6 class="card-title mb-0">
+                        <i class="bi bi-heart-pulse"></i> Care Guide
+                    </h6>
+                </div>
+                <div class="card-body p-3">
+                    <p class="card-text small mb-3">Complete guide to caring for your newborn baby with expert tips and advice.</p>
+                    <ul class="list-unstyled small mb-3">
+                        <li><i class="bi bi-check2 text-success"></i> Feeding guidance</li>
+                        <li><i class="bi bi-check2 text-success"></i> Sleep patterns</li>
+                        <li><i class="bi bi-check2 text-success"></i> Health monitoring</li>
+                    </ul>
+                    <a href="{{ url_for('care_guide') }}" class="btn btn-success btn-sm">
+                        <i class="bi bi-arrow-right"></i> Read Guide
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-12 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-warning text-white py-2">
+                    <h6 class="card-title mb-0">
+                        <i class="bi bi-calendar-check"></i> Vaccine Schedule
+                    </h6>
+                </div>
+                <div class="card-body p-3">
+                    <p class="card-text small mb-3">Stay on top of your baby's vaccination schedule for the first year and beyond.</p>
+                    <ul class="list-unstyled small mb-3">
+                        <li><i class="bi bi-check2 text-success"></i> Birth - 2 months</li>
+                        <li><i class="bi bi-check2 text-success"></i> 4 - 6 months</li>
+                        <li><i class="bi bi-check2 text-success"></i> 12+ months</li>
+                    </ul>
+                    <a href="{{ url_for('vaccines') }}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-arrow-right"></i> View Schedule
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header py-2">
+                    <h6 class="card-title mb-0">
+                        <i class="bi bi-clock-history"></i> Recent Activity
+                    </h6>
+                </div>
+                <div class="card-body p-3">
+                    <div id="recent-activities">
+                        <div class="text-center py-4 text-muted">
+                            <div class="spinner-border spinner-border-sm" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="small mt-2 mb-0">Loading recent activities...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.quick-action-card {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.activity-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-left: 4px solid #667eea;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.activity-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-type {
+    font-weight: 600;
+    color: #667eea;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+}
+
+.activity-details {
+    color: #666;
+    font-size: 0.8rem;
+    line-height: 1.3;
+}
+
+.activity-time {
+    color: #999;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+@media (max-width: 576px) {
+    .activity-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .activity-time {
+        align-self: flex-end;
+        margin-top: 4px;
+    }
+    
+    .display-5 {
+        font-size: 2rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadRecentActivities();
+});
+
+async function loadRecentActivities() {
+    try {
+        const [feedingResponse, sleepResponse] = await Promise.all([
+            fetch('/api/feeding'),
+            fetch('/api/sleep')
+        ]);
+
+        if (!feedingResponse.ok || !sleepResponse.ok) {
+            throw new Error('Failed to fetch data');
+        }
+
+        const feedingData = await feedingResponse.json();
+        const sleepData = await sleepResponse.json();
+
+        const allActivities = [
+            ...feedingData.slice(0, 5).map(item => ({...item, type: 'feeding'})),
+            ...sleepData.slice(0, 5).map(item => ({...item, type: 'sleep'}))
+        ].sort((a, b) => {
+            const timeA = new Date(a.timestamp || a.start_time);
+            const timeB = new Date(b.timestamp || b.start_time);
+            return timeB - timeA;
+        });
+
+        displayRecentActivities(allActivities.slice(0, 6));
+    } catch (error) {
+        console.error('Error loading recent activities:', error);
+        document.getElementById('recent-activities').innerHTML = 
+            '<div class="text-center py-3 text-muted"><small>Unable to load recent activities. <a href="/tracking">Go to tracking page</a> to view all records.</small></div>';
+    }
+}
+
+function displayRecentActivities(activities) {
+    const container = document.getElementById('recent-activities');
+    
+    if (!container) return;
+    
+    if (activities.length === 0) {
+        container.innerHTML = '<div class="text-center py-3 text-muted"><small>No recent activities. Start tracking to see data here!</small></div>';
+        return;
+    }
+
+    const activitiesHTML = activities.map(activity => {
+        const time = activity.type === 'feeding' ? activity.timestamp : activity.start_time;
+        
+        let details = '';
+        let icon = '';
+        
+        if (activity.type === 'feeding') {
+            icon = '🍼';
+            details = `${activity.type.charAt(0).toUpperCase() + activity.type.slice(1)} feeding`;
+            if (activity.amount) details += ` - ${activity.amount}ml`;
+            if (activity.duration) details += ` (${activity.duration} min)`;
+        } else {
+            icon = '💤';
+            details = 'Sleep session';
+            if (activity.end_time) {
+                const duration = calculateDuration(activity.start_time, activity.end_time);
+                details += ` - ${duration}`;
+            } else {
+                details += ' - Ongoing';
+            }
+        }
+
+        return `
+            <div class="activity-item">
+                <div class="activity-info">
+                    <div class="activity-type">${icon} ${activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}</div>
+                    <div class="activity-details">${details}</div>
+                </div>
+                <div class="activity-time">${getTimeSince(time)}</div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = activitiesHTML;
+}
+
+function calculateDuration(startTime, endTime) {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    const diffMs = end - start;
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (hours > 0) {
+        return `${hours}h ${minutes}m`;
+    }
+    return `${minutes}m`;
+}
+
+function getTimeSince(dateString) {
+    const now = new Date();
+    const past = new Date(dateString);
+    const diff = now.getTime() - past.getTime();
+    
+    const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    
+    if (minutes < 60) {
+        return minutes + ' min ago';
+    } else if (hours < 24) {
+        return hours + ' hr ago';
+    } else {
+        return days + ' day' + (days !== 1 ? 's' : '') + ' ago';
+    }
+}
+</script>
+{% endblock %}
