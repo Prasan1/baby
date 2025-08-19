@@ -411,12 +411,53 @@ function saveSleepRecord() {
         });
 }
 
+
+
+// function deleteFeedingRecord(id) {
+//     if (!confirm('Are you sure you want to delete this feeding record?')) {
+//         return;
+//     }
+    
+//     makeApiCall('DELETE', `/api/feeding/${id}`)
+//         .then(function(response) {
+//             if (response.success) {
+//                 showAlert('Feeding record deleted successfully!', 'success');
+//                 loadTrackingData();
+//             } else {
+//                 showAlert('Failed to delete feeding record.', 'danger');
+//             }
+//         })
+//         .catch(function(error) {
+//             showAlert('Error deleting feeding record: ' + error.message, 'danger');
+//         });
+// }
+
+// function deleteSleepRecord(id) {
+//     if (!confirm('Are you sure you want to delete this sleep record?')) {
+//         return;
+//     }
+    
+//     makeApiCall('DELETE', `/api/sleep/${id}`)
+//         .then(function(response) {
+//             if (response.success) {
+//                 showAlert('Sleep record deleted successfully!', 'success');
+//                 loadTrackingData();
+//             } else {
+//                 showAlert('Failed to delete sleep record.', 'danger');
+//             }
+//         })
+//         .catch(function(error) {
+//             showAlert('Error deleting sleep record: ' + error.message, 'danger');
+//         });
+// }
+
 function deleteFeedingRecord(id) {
     if (!confirm('Are you sure you want to delete this feeding record?')) {
         return;
     }
     
-    makeApiCall('DELETE', `/api/feeding/${id}`)
+    // Send ID in request body instead of URL
+    makeApiCall('DELETE', '/api/feeding', { id: id })
         .then(function(response) {
             if (response.success) {
                 showAlert('Feeding record deleted successfully!', 'success');
@@ -435,7 +476,8 @@ function deleteSleepRecord(id) {
         return;
     }
     
-    makeApiCall('DELETE', `/api/sleep/${id}`)
+    // Send ID in request body instead of URL  
+    makeApiCall('DELETE', '/api/sleep', { id: id })
         .then(function(response) {
             if (response.success) {
                 showAlert('Sleep record deleted successfully!', 'success');
