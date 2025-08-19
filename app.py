@@ -30,6 +30,10 @@ serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 # Initialize database
 init_db(app)
 
+@app.route('/health')
+def health_check():
+    return 'OK', 200
+
 @app.route('/')
 def index():
     current_date = datetime.now().strftime('%B %d, %Y')
@@ -532,7 +536,6 @@ def delete_feeding(feeding_id):
         return jsonify({'error': 'Not authenticated'}), 401
     
     user_id = session['user_id']
-    print(request.data)
     try:
         feeding = FeedingRecord.query.filter_by(id=feeding_id, user_id=user_id).first()
         if feeding is None:
